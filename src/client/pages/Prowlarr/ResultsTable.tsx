@@ -18,6 +18,11 @@ const columns: GridColDef[] = [
     headerName: "Title",
     flex: 1,
     minWidth: 150,
+    renderCell: (params) => (
+      <a href={params.row.guid} target="_blank" style={{ color: "inherit" }}>
+        {params.value}
+      </a>
+    ),
   },
   {
     field: "indexer",
@@ -64,6 +69,7 @@ export default function ResultsTable({ data }: { data: Torrent[] }) {
     <DataGrid
       sx={{ mt: 2 }}
       autoPageSize
+      rowSelection={false}
       getRowId={(it) => it.guid}
       rows={data}
       columns={columns}

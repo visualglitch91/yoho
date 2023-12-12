@@ -1,5 +1,5 @@
 import { CircularProgress, IconButton } from "@mui/material";
-import { Check, CloudDownload } from "@mui/icons-material";
+import { Check, CloudDownload, ErrorOutline } from "@mui/icons-material";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "$common/utils";
 import { Torrent } from "./types";
@@ -15,12 +15,20 @@ export default function DownloadButton({ torrent }: { torrent: Torrent }) {
     return <CircularProgress size={24} />;
   }
 
+  const isSettled = $$download.isSuccess || $$download.isError;
+
   return (
     <IconButton
       disabled={$$download.isPending}
-      onClick={$$download.isSuccess ? undefined : () => $$download.mutate()}
+      onClick={isSettled ? undefined : () => $$download.mutate()}
     >
-      {$$download.isSuccess ? <Check /> : <CloudDownload />}
+      {$$download.isSuccess ? (
+        <Check />
+      ) : $$download.isError ? (
+        <ErrorOutline />
+      ) : (
+        <CloudDownload />
+      )}
     </IconButton>
   );
 }
