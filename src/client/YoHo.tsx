@@ -1,4 +1,4 @@
-import { Route, Switch } from "wouter";
+import { Redirect, Route, Switch } from "wouter";
 import { Box } from "@mui/material";
 import {
   Movie as MovieIcon,
@@ -13,6 +13,8 @@ import Prowlarr from "$pages/Prowlarr";
 import Transmission from "$pages/Transmission";
 import JDownloader from "$pages/JDownloader";
 import NSwitch from "$pages/NSwitch";
+
+const DefaultRoute = () => <Redirect to="/radarr" />;
 
 export default function YoHo() {
   return (
@@ -80,6 +82,7 @@ export default function YoHo() {
         <Route path="/transmission" component={Transmission} />
         <Route path="/jdownloader" component={JDownloader} />
         <Route path="/switch" component={NSwitch} />
+        <Route path="/" component={DefaultRoute} />
       </Switch>
     </Layout>
   );
