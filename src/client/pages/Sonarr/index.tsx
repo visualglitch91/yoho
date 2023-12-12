@@ -3,9 +3,10 @@ import { orderBy } from "lodash";
 import { useQuery } from "@tanstack/react-query";
 import AppBar from "$common/Layout/AppBar";
 import { api } from "$common/utils";
-import { Box } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import MediaItem from "$common/MediaItem";
 import SearchBar from "$common/SearchBar";
+import CenteredMessage from "$common/CenteredMessage";
 
 export default function Sonarr() {
   const [search, setSearch] = useState("");
@@ -73,39 +74,45 @@ export default function Sonarr() {
         }}
       />
 
-      <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
-        {($series.data || []).map((item) => {
-          const percent =
-            item.statistics.episodeCount === 0
-              ? 100
-              : (item.statistics.episodeFileCount /
-                  item.statistics.episodeCount) *
-                100;
+      {$series.isLoading ? (
+        <CenteredMessage>
+          <CircularProgress color="primary" />
+        </CenteredMessage>
+      ) : (
+        <Box display="flex" flexWrap="wrap" gap={2}>
+          {($series.data || []).map((item) => {
+            const percent =
+              item.statistics.episodeCount === 0
+                ? 100
+                : (item.statistics.episodeFileCount /
+                    item.statistics.episodeCount) *
+                  100;
 
-          return (
-            <MediaItem
-              key={item.id}
-              poster={
-                item.images.find((it) => it.coverType === "poster")
-                  ?.remoteUrl || ""
-              }
-              title={item.title}
-              percent={percent}
-              color={
-                !item.path
-                  ? "warning"
-                  : item.downloading
-                  ? "primary"
-                  : percent === 100
-                  ? item.ended
-                    ? "success"
-                    : "info"
-                  : "error"
-              }
-            />
-          );
-        })}
-      </Box>
+            return (
+              <MediaItem
+                key={item.id}
+                poster={
+                  item.images.find((it) => it.coverType === "poster")
+                    ?.remoteUrl || ""
+                }
+                title={item.title}
+                percent={percent}
+                color={
+                  !item.path
+                    ? "warning"
+                    : item.downloading
+                    ? "primary"
+                    : percent === 100
+                    ? item.ended
+                      ? "success"
+                      : "info"
+                    : "error"
+                }
+              />
+            );
+          })}
+        </Box>
+      )}
     </>
   );
 }

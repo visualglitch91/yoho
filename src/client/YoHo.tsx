@@ -12,6 +12,7 @@ import Sonarr from "$pages/Sonarr";
 import Prowlarr from "$pages/Prowlarr";
 import Transmission from "$pages/Transmission";
 import JDownloader from "$pages/JDownloader";
+import NSwitch from "$pages/NSwitch";
 
 export default function YoHo() {
   return (
@@ -26,6 +27,21 @@ export default function YoHo() {
           title: "Sonarr",
           to: "/sonarr",
           icon: <LiveTvIcon />,
+        },
+        {
+          title: "Switch Games",
+          to: "/switch",
+          icon: (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width="1.5rem"
+              height="1.5rem"
+            >
+              <img src="/icons/switch-white.png" style={{ width: "1.2rem" }} />
+            </Box>
+          ),
         },
         {
           title: "Prowlarr",
@@ -63,6 +79,7 @@ export default function YoHo() {
         <Route path="/prowlarr" component={Prowlarr} />
         <Route path="/transmission" component={Transmission} />
         <Route path="/jdownloader" component={JDownloader} />
+        <Route path="/switch" component={NSwitch} />
       </Switch>
     </Layout>
   );

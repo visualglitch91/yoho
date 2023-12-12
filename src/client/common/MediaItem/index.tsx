@@ -5,22 +5,21 @@ import {
   LinearProgressProps,
 } from "@mui/material";
 
-const imageStyle = {
-  width: 140,
-  height: 210,
-};
-
 export default function MediaItem({
   title,
   poster,
-  color,
+  color = "primary",
   percent = 100,
+  width = 140,
+  height = 210,
   onClick,
 }: {
   title: string;
   poster: string;
-  color: LinearProgressProps["color"];
-  percent?: number;
+  color?: LinearProgressProps["color"];
+  width?: number;
+  height?: number;
+  percent?: number | false;
   onClick?: () => void;
 }) {
   return (
@@ -28,7 +27,7 @@ export default function MediaItem({
       sx={{
         display: "flex",
         flexDirection: "column",
-        width: imageStyle.width,
+        width: width,
         borderRadius: "4px",
         overflow: "hidden",
       }}
@@ -37,7 +36,8 @@ export default function MediaItem({
       <Box
         sx={(theme) => ({
           background: theme.palette.background.default,
-          ...imageStyle,
+          width,
+          height,
           "& > img": {
             width: "100%",
             height: "100%",
@@ -47,12 +47,14 @@ export default function MediaItem({
       >
         <img src={poster} alt="" title={title} loading="lazy" />
       </Box>
-      <LinearProgress
-        sx={{ width: "100%" }}
-        variant="determinate"
-        value={percent}
-        color={color}
-      />
+      {percent !== false && (
+        <LinearProgress
+          sx={{ width: "100%" }}
+          variant="determinate"
+          value={percent}
+          color={color}
+        />
+      )}
     </ButtonBase>
   );
 }

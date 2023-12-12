@@ -65,7 +65,7 @@ export default function Radarr() {
           <CircularProgress color="primary" />
         </CenteredMessage>
       ) : (
-        <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
+        <Box display="flex" flexWrap="wrap" gap={2}>
           {($movies.data || []).map((movie) => (
             <MediaItem
               key={movie.id}
