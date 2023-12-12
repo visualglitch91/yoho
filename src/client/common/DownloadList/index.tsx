@@ -23,8 +23,9 @@ import { humanizeBytes, round } from "$common/utils";
 import humanizeDuration from "humanize-duration";
 import { formatProgress } from "./utils";
 import useConfirm from "$common/hooks/useConfirm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CenteredMessage from "$common/CenteredMessage";
+import { difference } from "lodash";
 
 export interface Download {
   id: string;
@@ -91,8 +92,18 @@ export default function DownloadList({
 
   const onSelectedRemove = () => {
     confirmRemove(getSelectedDownloads());
-    setSelected([]);
   };
+
+  useEffect(() => {
+    const downloadIds = downloads.map((it) => it.id);
+
+    if (difference(selected, downloadIds).length > 0) {
+      setSelected((selected) =>
+        selected.filter((it) => downloadIds.includes(it))
+      );
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [downloads]);
 
   return (
     <>
