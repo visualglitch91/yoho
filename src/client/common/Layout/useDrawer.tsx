@@ -1,18 +1,11 @@
 import * as React from "react";
 import {
   List,
-  Divider,
-  useTheme,
   ListItem,
-  IconButton,
   ListItemIcon,
   ListItemText,
   ListItemButton,
 } from "@mui/material";
-import {
-  ChevronLeft as ChevronLeftIcon,
-  ChevronRight as ChevronRightIcon,
-} from "@mui/icons-material/";
 import { Drawer, DrawerHeader } from "./styled";
 import { Link, useLocation } from "wouter";
 
@@ -21,7 +14,6 @@ export interface useDrawerProps {
 }
 
 export default function useDrawer({ menu }: useDrawerProps) {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [location] = useLocation();
 

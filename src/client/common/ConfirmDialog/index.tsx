@@ -1,9 +1,4 @@
-import {
-  Button,
-  ButtonProps,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
+import { Button, Typography, ButtonProps } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import StandardDialog, { StandardDialogProps } from "../StandardDialog";
 import { map } from "lodash";
