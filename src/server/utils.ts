@@ -10,13 +10,6 @@ export function createAxiosProxy(
   const api = axios.create({ baseURL, headers });
 
   app.use(path, async (req, res) => {
-    console.log({
-      url: req.url,
-      method: req.method,
-      headers: req.headers,
-      body: req.body,
-    });
-
     try {
       const response = await api.request({
         url: req.url,
