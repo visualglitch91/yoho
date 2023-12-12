@@ -84,6 +84,11 @@ const api = new MyJdApi(
 
 api.connect();
 
+// Keep connection alive
+setInterval(() => {
+  api.getLinks();
+}, 10 * 60_000);
+
 jdownloader.get("/downloads", async (_, res) => {
   try {
     res.send(await api.getLinks());
