@@ -1,9 +1,11 @@
 import { orderBy } from "lodash";
+import { CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { api, wait } from "$common/utils";
 import AppBar from "$common/Layout/AppBar";
 import DownloadList, { Download } from "$common/DownloadList";
 import { usePrompt } from "$common/hooks/usePrompt";
+import CenteredMessage from "$common/CenteredMessage";
 
 const fallbackStatus = {
   status: "processing",
@@ -92,7 +94,11 @@ export default function Transmission() {
   return (
     <>
       <AppBar title="Transmission" />
-      {$torrents.data && (
+      {typeof $torrents.data === "undefined" ? (
+        <CenteredMessage>
+          <CircularProgress color="primary" />
+        </CenteredMessage>
+      ) : (
         <DownloadList
           downloads={$torrents.data.map((it) => ({
             id: String(it.id),

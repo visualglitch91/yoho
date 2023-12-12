@@ -66,13 +66,14 @@ class API:
 
     def delete_links(self, link_ids):
         try:
-            print("Deleting ids %s", link_ids)
+            print("Deleting ids", link_ids)
 
             if not self.connected:
                 self.connect()
                 if not self.connected:
                     return False
 
+            self.device.linkgrabber.remove_links(link_ids=link_ids)
             self.device.downloads.remove_links(link_ids=link_ids)
             return True
         except myjdapi.exception.MYJDException as e:

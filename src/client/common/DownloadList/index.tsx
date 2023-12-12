@@ -1,17 +1,16 @@
 import {
+  Fab,
   List,
   Stack,
+  Alert,
+  Button,
   ListItem,
+  Snackbar,
   Checkbox,
   IconButton,
   ListItemIcon,
   ListItemText,
   LinearProgress,
-  Snackbar,
-  Alert,
-  Button,
-  Box,
-  Fab,
 } from "@mui/material";
 import {
   HighlightOff as RemoveIcon,
@@ -24,12 +23,19 @@ import humanizeDuration from "humanize-duration";
 import { formatProgress } from "./utils";
 import useConfirm from "$common/hooks/useConfirm";
 import { useState } from "react";
+import CenteredMessage from "$common/CenteredMessage";
 
 export interface Download {
   id: string;
   name: string;
   eta: number;
-  status: "downloading" | "uploading" | "processing" | "queued" | "stopped";
+  status:
+    | "downloading"
+    | "uploading"
+    | "processing"
+    | "queued"
+    | "stopped"
+    | "error";
   statusInfo: string;
   progress: number;
   completed: boolean;
@@ -132,16 +138,7 @@ export default function DownloadList({
         </Alert>
       </Snackbar>
       {downloads.length === 0 ? (
-        <Box
-          sx={{
-            flex: 1,
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          No downloads found
-        </Box>
+        <CenteredMessage>No downloads found</CenteredMessage>
       ) : (
         <List sx={{ width: "100%" }}>
           {downloads.map((download) => {
@@ -215,16 +212,30 @@ export default function DownloadList({
                                 })
                               : "∞"
                             : false,
-                          formatProgress(download.total, download.progress),
-                          round(download.progress * 100, 2) + "%",
+                          download.total > 0
+                            ? formatProgress(download.total, download.progress)
+                            : false,
+                          download.progress > 0
+                            ? round(download.progress * 100, 2) + "%"
+                            : false,
                         ]
                           .filter((it) => it !== false)
                           .join(" • ")}
                       </div>
                       <LinearProgress
                         variant="determinate"
-                        color={download.completed ? "info" : "success"}
-                        value={download.progress * 100}
+                        color={
+                          download.status === "error"
+                            ? "error"
+                            : download.completed
+                            ? "info"
+                            : "success"
+                        }
+                        value={
+                          download.status === "error"
+                            ? 100
+                            : download.progress * 100
+                        }
                       />
                     </Stack>
                   }

@@ -67,6 +67,11 @@ class MyJdApi {
       throw new Error("Could not add link");
     }
   }
+
+  async deleteLinks(ids: string[]): Promise<void> {
+    await this.awaitConnection();
+    await this.api.delete_links(ids);
+  }
 }
 
 const jdownloader = Router();
@@ -87,9 +92,17 @@ jdownloader.get("/downloads", async (_, res) => {
   }
 });
 
-jdownloader.post("/downloads", async ({ body }, res) => {
+jdownloader.post("/add", async ({ body }, res) => {
   try {
     res.send(await api.addLink(body.url));
+  } catch (err: any) {
+    res.status(500).send(err?.message);
+  }
+});
+
+jdownloader.post("/delete", async ({ body }, res) => {
+  try {
+    res.send(await api.deleteLinks(body.ids));
   } catch (err: any) {
     res.status(500).send(err?.message);
   }
