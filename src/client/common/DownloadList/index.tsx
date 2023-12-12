@@ -229,7 +229,7 @@ export default function DownloadList({
                             ? "error"
                             : download.completed
                             ? "info"
-                            : "success"
+                            : "primary"
                         }
                         value={
                           download.status === "error"

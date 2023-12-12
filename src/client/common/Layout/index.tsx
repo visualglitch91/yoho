@@ -39,7 +39,11 @@ export default function Layout({
 
   return (
     <Box sx={{ display: "flex" }}>
-      <AppBar position="fixed" open={isOpen}>
+      <AppBar
+        position="fixed"
+        open={isOpen}
+        sx={{ backgroundColor: "#56456f" }}
+      >
         <Toolbar>
           <IconButton
             color="inherit"
