@@ -16,6 +16,7 @@ export function usePrompt() {
     mount((props) => (
       <PromptDialog
         {...props}
+        sx={{ "& .MuiDialog-paper": { minWidth: 400 } }}
         title={title}
         fields={fields}
         onConfirm={(values) => {

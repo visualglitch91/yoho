@@ -3,9 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { Box } from "@mui/material";
 import AppBar from "$common/Layout/AppBar";
 import MediaItem from "$common/MediaItem";
+import useModal from "$common/hooks/useModal";
 import { api } from "$common/utils";
+import { Movie } from "./types";
+import MovieDialog from "./MovieDialog";
 
 export default function Radarr() {
+  const mount = useModal();
   const $movies = useQuery({
     queryKey: ["Radarr", "Movies"],
     queryFn: () => {
@@ -23,18 +27,7 @@ export default function Radarr() {
           ...it,
           downloading: moviesInQueue.includes(it.id),
         }));
-      }) as Promise<
-        {
-          id: string;
-          title: string;
-          downloading: boolean;
-          hasFile: boolean;
-          images: {
-            coverType: string;
-            remoteUrl: string;
-          }[];
-        }[]
-      >;
+      }) as Promise<Movie[]>;
     },
   });
 
@@ -42,16 +35,29 @@ export default function Radarr() {
     <>
       <AppBar title="Radarr" />
       <Box display="flex" flexWrap="wrap" gap={2} justifyContent="center">
-        {($movies.data || []).map((item) => (
+        {($movies.data || []).map((movie) => (
           <MediaItem
-            key={item.id}
+            key={movie.id}
             poster={
-              item.images.find((it) => it.coverType === "poster")?.remoteUrl ||
+              movie.images.find((it) => it.coverType === "poster")?.remoteUrl ||
               ""
             }
-            title={item.title}
+            title={movie.title}
             color={
-              item.hasFile ? "success" : item.downloading ? "primary" : "error"
+              movie.hasFile
+                ? "success"
+                : movie.downloading
+                ? "primary"
+                : "error"
+            }
+            onClick={() =>
+              mount((props) => (
+                <MovieDialog
+                  {...props}
+                  movie={movie}
+                  requestRefetch={$movies.refetch}
+                />
+              ))
             }
           />
         ))}

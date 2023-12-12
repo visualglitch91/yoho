@@ -1,5 +1,5 @@
 import { times } from "lodash";
-import { createTheme } from "@mui/material";
+import { createTheme, ThemeOptions } from "@mui/material";
 
 const draculaPalette = {
   darkPurple: "#BD93F9",
@@ -17,7 +17,27 @@ const draculaPalette = {
   red: "#FF5555",
 };
 
+function getModuleName(filePath: string) {
+  return filePath.match(/\/([^/]+)\.ts$/)?.[1] || null;
+}
+
+// Load all overrides from folder dinamically
+const overrides = Object.entries(
+  import.meta.glob("./overrides/*.ts", { eager: true })
+).reduce(
+  //@ts-expect-error
+  (acc, [key, { default: module }]) => ({
+    ...acc,
+    //@ts-expect-error
+    [getModuleName(key)]: module,
+  }),
+  {}
+) as {
+  [key: string]: ThemeOptions["components"][];
+};
+
 const theme = createTheme({
+  components: overrides,
   //@ts-expect-error
   shadows: times(25, () => "none"),
   palette: {
