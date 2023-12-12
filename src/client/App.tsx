@@ -1,9 +1,20 @@
-import { CssBaseline } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import YoHo from "./YoHo";
+
+const queryClient = new QueryClient();
+
+const darkTheme = createTheme({
+  palette: { mode: "dark" },
+});
 
 export default function App() {
   return (
-    <>
-      <CssBaseline />
-    </>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <YoHo />
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }

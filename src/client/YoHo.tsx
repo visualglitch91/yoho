@@ -1,0 +1,69 @@
+import { Box } from "@mui/material";
+import {
+  Movie as MovieIcon,
+  LiveTv as LiveTvIcon,
+  Search as SearchIcon,
+  Download as DownloadIcon,
+} from "@mui/icons-material";
+import Layout from "./Layout";
+import { Route, Switch } from "wouter";
+import Radarr from "./pages/Radarr";
+import Sonarr from "./pages/Sonarr";
+import Prowlarr from "./pages/Prowlarr";
+import Transmission from "./pages/Transmission";
+import JDownloader from "./pages/JDownloader";
+
+export default function YoHo() {
+  return (
+    <Layout
+      menu={[
+        {
+          title: "Radarr",
+          to: "/radarr",
+          icon: <MovieIcon />,
+        },
+        {
+          title: "Sonarr",
+          to: "/sonarr",
+          icon: <LiveTvIcon />,
+        },
+        {
+          title: "Prowlarr",
+          to: "/prowlarr",
+          icon: <SearchIcon />,
+        },
+        {
+          title: "Transmission",
+          to: "/transmission",
+          icon: <DownloadIcon />,
+        },
+        {
+          title: "JDownloader",
+          to: "/jdownloader",
+          icon: (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width="1.5rem"
+              height="1.5rem"
+            >
+              <img
+                src="/icons/jdownloader-white.png"
+                style={{ width: "1.3rem" }}
+              />
+            </Box>
+          ),
+        },
+      ]}
+    >
+      <Switch>
+        <Route path="/radarr" component={Radarr} />
+        <Route path="/sonarr" component={Sonarr} />
+        <Route path="/prowlarr" component={Prowlarr} />
+        <Route path="/transmission" component={Transmission} />
+        <Route path="/jdownloader" component={JDownloader} />
+      </Switch>
+    </Layout>
+  );
+}
