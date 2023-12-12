@@ -1,33 +1,7 @@
-import {
-  AppBarProps as MuiAppBarProps,
-  styled,
-  Box,
-  AppBar as MuiAppBar,
-  Toolbar,
-  IconButton,
-} from "@mui/material";
+import { Box, AppBar, Toolbar, IconButton } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material/";
 import useDrawer, { useDrawerProps } from "./useDrawer";
 import { PORTAL_ID } from "./AppBar";
-import { DRAWER_WIDTH } from "./styled";
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})<MuiAppBarProps & { open?: boolean }>(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: DRAWER_WIDTH,
-    width: `calc(100% - ${DRAWER_WIDTH}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
 
 export default function Layout({
   menu,
@@ -35,25 +9,24 @@ export default function Layout({
 }: useDrawerProps & {
   children: React.ReactNode;
 }) {
-  const { isOpen, openDrawer, drawer, drawerHeader } = useDrawer({ menu });
+  const { toggleDrawer, drawer, drawerHeader } = useDrawer({
+    menu,
+  });
 
   return (
     <Box sx={{ display: "flex" }}>
       <AppBar
+        elevation={0}
         position="fixed"
-        open={isOpen}
-        sx={{ backgroundColor: "#56456f" }}
+        sx={{ zIndex: 2, backgroundColor: "#020202", px: "7px" }}
       >
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={openDrawer}
+            onClick={toggleDrawer}
             edge="start"
-            sx={{
-              marginRight: 5,
-              ...(isOpen && { display: "none" }),
-            }}
+            sx={{ mr: "30px" }}
           >
             <MenuIcon />
           </IconButton>
@@ -73,14 +46,27 @@ export default function Layout({
         <Box
           component="main"
           sx={{
-            p: 3,
+            p: 1,
             flexGrow: 1,
             position: "relative",
             display: "flex",
             flexDirection: "column",
           }}
         >
-          {children}
+          <Box
+            component="main"
+            sx={{
+              p: 2,
+              flexGrow: 1,
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              background: "#111017",
+              borderRadius: "4px",
+            }}
+          >
+            {children}
+          </Box>
         </Box>
       </Box>
     </Box>

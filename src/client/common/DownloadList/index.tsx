@@ -3,6 +3,7 @@ import {
   List,
   Stack,
   Alert,
+  Paper,
   Button,
   ListItem,
   Snackbar,
@@ -140,110 +141,119 @@ export default function DownloadList({
       {downloads.length === 0 ? (
         <CenteredMessage>No downloads found</CenteredMessage>
       ) : (
-        <List sx={{ width: "100%" }}>
-          {downloads.map((download) => {
-            const labelId = `checkbox-list-label-${download.id}`;
+        <Paper>
+          <List sx={{ width: "100%", p: 0 }}>
+            {downloads.map((download, index) => {
+              const labelId = `checkbox-list-label-${download.id}`;
 
-            return (
-              <ListItem
-                dense
-                disablePadding
-                key={download.id}
-                secondaryAction={
-                  <IconButton
-                    edge="end"
-                    onClick={() => confirmRemove([download])}
-                  >
-                    <RemoveIcon />
-                  </IconButton>
-                }
-              >
-                <ListItemIcon sx={canStartStop ? { minWidth: 0 } : undefined}>
-                  <Checkbox
-                    edge="start"
-                    checked={selected.includes(download.id)}
-                    tabIndex={-1}
-                    disableRipple
-                    inputProps={{ "aria-labelledby": labelId }}
-                    onChange={(_, checked) =>
-                      setSelected(
-                        checked
-                          ? selected.concat(download.id)
-                          : selected.filter((it) => it !== download.id)
-                      )
+              return (
+                <ListItem
+                  dense
+                  divider={index !== downloads.length - 1}
+                  key={download.id}
+                  sx={{ px: 3, py: 2 }}
+                >
+                  <ListItemIcon sx={canStartStop ? { minWidth: 0 } : undefined}>
+                    <Checkbox
+                      edge="start"
+                      checked={selected.includes(download.id)}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ "aria-labelledby": labelId }}
+                      onChange={(_, checked) =>
+                        setSelected(
+                          checked
+                            ? selected.concat(download.id)
+                            : selected.filter((it) => it !== download.id)
+                        )
+                      }
+                    />
+                  </ListItemIcon>
+
+                  {canStartStop && (
+                    <ListItemIcon sx={{ minWidth: 0, mr: 2 }}>
+                      {download.status === "stopped" ? (
+                        <IconButton
+                          edge="end"
+                          onClick={() => onStart!([download])}
+                        >
+                          <PlayIcon />
+                        </IconButton>
+                      ) : (
+                        <IconButton
+                          edge="end"
+                          onClick={() => onStop!([download])}
+                        >
+                          <PauseIcon />
+                        </IconButton>
+                      )}
+                    </ListItemIcon>
+                  )}
+
+                  <ListItemIcon>
+                    <IconButton
+                      edge="end"
+                      onClick={() => confirmRemove([download])}
+                    >
+                      <RemoveIcon />
+                    </IconButton>
+                  </ListItemIcon>
+
+                  <ListItemText
+                    id={labelId}
+                    primary={download.name}
+                    secondary={
+                      <Stack spacing={0.5}>
+                        <div>
+                          {[
+                            download.statusInfo,
+                            download.status === "downloading"
+                              ? `${humanizeBytes(download.downloadRate)}/s`
+                              : false,
+                            download.status === "downloading"
+                              ? download.eta > 1
+                                ? humanizeDuration(download.eta * 1000, {
+                                    round: true,
+                                    largest: 2,
+                                  })
+                                : "∞"
+                              : false,
+                            download.total > 0
+                              ? formatProgress(
+                                  download.total,
+                                  download.progress
+                                )
+                              : false,
+                            download.progress > 0
+                              ? round(download.progress * 100, 2) + "%"
+                              : false,
+                          ]
+                            .filter((it) => it !== false)
+                            .join(" • ")}
+                        </div>
+                        <LinearProgress
+                          variant="determinate"
+                          color={
+                            download.status === "error"
+                              ? "error"
+                              : download.completed
+                              ? "info"
+                              : "primary"
+                          }
+                          value={
+                            download.status === "error"
+                              ? 100
+                              : download.progress * 100
+                          }
+                        />
+                      </Stack>
                     }
                   />
-                </ListItemIcon>
-                {canStartStop && (
-                  <ListItemIcon>
-                    {download.status === "stopped" ? (
-                      <IconButton
-                        edge="end"
-                        onClick={() => onStart!([download])}
-                      >
-                        <PlayIcon />
-                      </IconButton>
-                    ) : (
-                      <IconButton
-                        edge="end"
-                        onClick={() => onStop!([download])}
-                      >
-                        <PauseIcon />
-                      </IconButton>
-                    )}
-                  </ListItemIcon>
-                )}
-                <ListItemText
-                  id={labelId}
-                  primary={download.name}
-                  secondary={
-                    <Stack spacing={0.5}>
-                      <div>
-                        {[
-                          download.statusInfo,
-                          download.status === "downloading"
-                            ? `${humanizeBytes(download.downloadRate)}/s`
-                            : false,
-                          download.status === "downloading"
-                            ? download.eta > 1
-                              ? humanizeDuration(download.eta * 1000, {
-                                  round: true,
-                                  largest: 2,
-                                })
-                              : "∞"
-                            : false,
-                          download.total > 0
-                            ? formatProgress(download.total, download.progress)
-                            : false,
-                          download.progress > 0
-                            ? round(download.progress * 100, 2) + "%"
-                            : false,
-                        ]
-                          .filter((it) => it !== false)
-                          .join(" • ")}
-                      </div>
-                      <LinearProgress
-                        variant="determinate"
-                        color={
-                          download.status === "error"
-                            ? "error"
-                            : download.completed
-                            ? "info"
-                            : "primary"
-                        }
-                        value={
-                          download.status === "error"
-                            ? 100
-                            : download.progress * 100
-                        }
-                      />
-                    </Stack>
-                  }
-                />
-              </ListItem>
-            );
-          })}
-        </List>
+                </ListItem>
+              );
+            })}
+          </List>
+        </Paper>
       )}
     </>
   );

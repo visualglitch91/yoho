@@ -33,27 +33,32 @@ export default function useDrawer({ menu }: useDrawerProps) {
     setOpen(false);
   };
 
+  const toggleDrawer = () => {
+    setOpen((x) => !x);
+  };
+
   const drawer = (
-    <Drawer variant="permanent" open={open}>
-      <DrawerHeader>
-        <IconButton onClick={closeDrawer}>
-          {theme.direction === "rtl" ? (
-            <ChevronRightIcon />
-          ) : (
-            <ChevronLeftIcon />
-          )}
-        </IconButton>
-      </DrawerHeader>
-      <Divider />
-      <List component="div">
+    <Drawer
+      variant="permanent"
+      open={open}
+      sx={{
+        zIndex: 1,
+        "& > .MuiPaper-root": { borderRight: 0, background: "transparent" },
+      }}
+    >
+      <DrawerHeader />
+      <List component="div" sx={{ p: 1 }}>
         {menu.map((item, index) => (
           <Link key={index} to={item.to}>
             <ListItem
               disablePadding
               component="a"
               sx={{
+                borderRadius: "4px",
+                overflow: "hidden",
                 display: "block",
                 color: "unset",
+                mb: 1,
                 backgroundColor: location.startsWith(item.to)
                   ? "#463f51"
                   : undefined,
@@ -93,6 +98,7 @@ export default function useDrawer({ menu }: useDrawerProps) {
     isOpen: open,
     openDrawer,
     closeDrawer,
+    toggleDrawer,
     drawer,
     drawerHeader,
   };

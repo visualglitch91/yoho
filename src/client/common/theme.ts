@@ -1,3 +1,4 @@
+import { times } from "lodash";
 import { createTheme } from "@mui/material";
 
 const draculaPalette = {
@@ -17,6 +18,8 @@ const draculaPalette = {
 };
 
 const theme = createTheme({
+  //@ts-expect-error
+  shadows: times(25, () => "none"),
   palette: {
     mode: "dark",
     primary: {
@@ -27,7 +30,7 @@ const theme = createTheme({
     },
     background: {
       default: draculaPalette.background,
-      paper: draculaPalette.background,
+      paper: "#111217",
     },
     text: {
       primary: draculaPalette.foreground,
