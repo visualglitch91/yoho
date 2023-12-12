@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { ModalProvider } from "$common/hooks/useModal";
 import YoHo from "./YoHo";
 
 const queryClient = new QueryClient();
@@ -13,7 +14,9 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
-        <YoHo />
+        <ModalProvider>
+          <YoHo />
+        </ModalProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

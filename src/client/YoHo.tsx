@@ -1,3 +1,4 @@
+import { Route, Switch } from "wouter";
 import { Box } from "@mui/material";
 import {
   Movie as MovieIcon,
@@ -5,13 +6,12 @@ import {
   Search as SearchIcon,
   Download as DownloadIcon,
 } from "@mui/icons-material";
-import Layout from "./Layout";
-import { Route, Switch } from "wouter";
-import Radarr from "./pages/Radarr";
-import Sonarr from "./pages/Sonarr";
-import Prowlarr from "./pages/Prowlarr";
-import Transmission from "./pages/Transmission";
-import JDownloader from "./pages/JDownloader";
+import Layout from "$common/Layout";
+import Radarr from "$pages/Radarr";
+import Sonarr from "$pages/Sonarr";
+import Prowlarr from "$pages/Prowlarr";
+import Transmission from "$pages/Transmission";
+import JDownloader from "$pages/JDownloader";
 
 export default function YoHo() {
   return (

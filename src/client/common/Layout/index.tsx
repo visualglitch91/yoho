@@ -57,9 +57,27 @@ export default function Layout({
         </Toolbar>
       </AppBar>
       {drawer}
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        sx={{
+          minHeight: "100vh",
+          flexGrow: 1,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         {drawerHeader}
-        {children}
+        <Box
+          component="main"
+          sx={{
+            p: 3,
+            flexGrow: 1,
+            position: "relative",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Box>
   );

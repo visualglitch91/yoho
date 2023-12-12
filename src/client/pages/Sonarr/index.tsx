@@ -1,4 +1,4 @@
-import AppBar from "../../Layout/AppBar";
+import AppBar from "$common/Layout/AppBar";
 
 export default function Sonarr() {
   return (

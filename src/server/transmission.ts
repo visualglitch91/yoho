@@ -41,7 +41,7 @@ async function request<T = object>(method: string, params: any): Promise<T> {
 
 const transmission = Router();
 
-transmission.get("/torrents", (_, res) => {
+transmission.get("/downloads", (_, res) => {
   request("torrent-get", {
     fields: [
       "id",
@@ -69,7 +69,7 @@ transmission.get("/torrents", (_, res) => {
   );
 });
 
-transmission.post("/downloads", (req, res) => {
+transmission.post("/add", (req, res) => {
   request("torrent-add", {
     start: true,
     bandwidthPriority: 0,

@@ -1,6 +1,5 @@
 import express from "express";
 import ViteExpress from "vite-express";
-import { python } from "pythonia";
 import env from "./env";
 import { createAxiosProxy } from "./utils";
 import jdownloader from "./jdownloader";
@@ -34,8 +33,7 @@ ViteExpress.listen(app, port, () =>
   console.log("Server is listening at port", port)
 );
 
-// @ts-ignore
-const shutdown = () => python.exit();
+const shutdown = () => process.exit();
 
 process.on("SIGTERM", shutdown);
 process.on("SIGINT", shutdown);
