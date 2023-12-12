@@ -14,7 +14,7 @@ import {
   ChevronRight as ChevronRightIcon,
 } from "@mui/icons-material/";
 import { Drawer, DrawerHeader } from "./styled";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export interface useDrawerProps {
   menu: { icon: React.ReactNode; title: string; to: string }[];
@@ -23,6 +23,7 @@ export interface useDrawerProps {
 export default function useDrawer({ menu }: useDrawerProps) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [location] = useLocation();
 
   const openDrawer = () => {
     setOpen(true);
@@ -50,7 +51,13 @@ export default function useDrawer({ menu }: useDrawerProps) {
             <ListItem
               disablePadding
               component="a"
-              sx={{ display: "block", color: "unset" }}
+              sx={{
+                display: "block",
+                color: "unset",
+                backgroundColor: location.startsWith(item.to)
+                  ? "#463f51"
+                  : undefined,
+              }}
             >
               <ListItemButton
                 sx={{
