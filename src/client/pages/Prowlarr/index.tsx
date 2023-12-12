@@ -1,16 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Button,
-  CircularProgress,
-  InputAdornment,
-  OutlinedInput,
-  Stack,
-} from "@mui/material";
-import { Search } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
 import CenteredMessage from "$common/CenteredMessage";
 import AppBar from "$common/Layout/AppBar";
 import { api } from "$common/utils";
+import SearchBar from "$common/SearchBar";
 import ResultsTable from "./ResultsTable";
 import { Torrent } from "./types";
 
@@ -32,34 +26,17 @@ export default function Prowlarr() {
   return (
     <>
       <AppBar title="Prowlarr" />
-      <Stack
-        direction="row"
-        spacing={2}
-        component="form"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (search === e.currentTarget.search.value) {
+
+      <SearchBar
+        onSearch={(term) => {
+          if (search === term) {
             $results.refetch();
           } else {
-            setSearch(e.currentTarget.search.value);
+            setSearch(term);
           }
         }}
-      >
-        <OutlinedInput
-          fullWidth
-          placeholder="Search"
-          size="small"
-          name="search"
-          startAdornment={
-            <InputAdornment position="start">
-              <Search />
-            </InputAdornment>
-          }
-        />
-        <Button variant="outlined" size="small" type="submit">
-          Search
-        </Button>
-      </Stack>
+      />
+
       {search ? (
         $results.isFetching ? (
           <CenteredMessage>
@@ -68,9 +45,7 @@ export default function Prowlarr() {
         ) : (
           <ResultsTable data={$results.data || []} />
         )
-      ) : (
-        <CenteredMessage>Torrent Search</CenteredMessage>
-      )}
+      ) : null}
     </>
   );
 }

@@ -1,11 +1,11 @@
-import { Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Button, Stack } from "@mui/material";
 import StandardDialog, { StandardDialogProps } from "$common/StandardDialog";
 import useConfirm from "$common/hooks/useConfirm";
 import { api } from "$common/utils";
 import SelectField from "$common/SelectField";
-import useQualityProfiles from "./useQualityProfiles";
 import { Movie } from "./types";
-import { useState } from "react";
+import useConfig from "./useConfig";
 
 export default function MovieDialog({
   movie,
@@ -19,10 +19,15 @@ export default function MovieDialog({
   "title" | "children" | "footer" | "hideCloseButton" | "disableContentPadding"
 >) {
   const confirm = useConfirm();
-  const qualityProfiles = useQualityProfiles();
+  const config = useConfig();
 
-  const [qualityProfileId, setQualityProfileId] = useState(
-    String(movie.qualityProfileId)
+  const [form, setForm] = useState(
+    movie.monitored
+      ? {
+          rootFolderPath: movie.rootFolderPath || "",
+          qualityProfileId: String(movie.qualityProfileId || ""),
+        }
+      : undefined
   );
 
   const onDelete = () => {
@@ -41,14 +46,40 @@ export default function MovieDialog({
   };
 
   const onUpdate = () => {
-    api
-      .put(`/radarr/v3/movie/${movie.id}`, {
-        ...movie,
-        qualityProfileId: Number(qualityProfileId),
-      })
+    if (!form) {
+      return;
+    }
+
+    const promise = movie.monitored
+      ? api.put(`/radarr/v3/movie/${movie.id}`, {
+          ...movie,
+          qualityProfileId: Number(form.qualityProfileId),
+        })
+      : api.post(`/radarr/v3/movie`, {
+          ...movie,
+          monitored: true,
+          qualityProfileId: Number(form.qualityProfileId),
+          rootFolderPath: form.rootFolderPath,
+          addOptions: { monitor: "movieOnly", searchForMovie: true },
+        });
+
+    promise
       .then(() => requestRefetch())
       .then(() => dialogProps.onClose("closeButton"));
   };
+
+  useEffect(() => {
+    if (config && !form) {
+      setForm({
+        qualityProfileId: String(config.qualityProfiles[0].id),
+        rootFolderPath: config.rootPaths[0],
+      });
+    }
+  }, [config, form]);
+
+  if (!config || !form) {
+    return null;
+  }
 
   return (
     <StandardDialog
@@ -60,22 +91,43 @@ export default function MovieDialog({
           <Button variant="outlined" color="error" onClick={onDelete}>
             Delete
           </Button>
-          <Button variant="outlined" onClick={onUpdate}>
-            Save Changes
+          <Button
+            disabled={
+              form.qualityProfileId === "" || form.rootFolderPath === ""
+            }
+            variant="outlined"
+            onClick={onUpdate}
+          >
+            {movie.monitored ? "Save Changes" : "Add Movie"}
           </Button>
         </>
       }
     >
-      <SelectField
-        size="small"
-        label="Quality Profile"
-        value={String(qualityProfileId)}
-        options={(qualityProfiles || []).map((it) => ({
-          value: String(it.id),
-          label: it.name,
-        }))}
-        onChange={(_, __, value) => setQualityProfileId(value || "")}
-      />
+      <Stack spacing={2}>
+        {!movie.monitored && (
+          <SelectField
+            size="small"
+            label="Root Folder"
+            value={form.rootFolderPath}
+            options={config.rootPaths.map((it) => ({ value: it, label: it }))}
+            onChange={(_, __, value) => {
+              setForm({ ...form!, rootFolderPath: value || "" });
+            }}
+          />
+        )}
+        <SelectField
+          size="small"
+          label="Quality Profile"
+          value={String(form.qualityProfileId)}
+          options={config.qualityProfiles.map((it) => ({
+            value: String(it.id),
+            label: it.name,
+          }))}
+          onChange={(_, __, value) => {
+            setForm({ ...form, qualityProfileId: value || "" });
+          }}
+        />
+      </Stack>
     </StandardDialog>
   );
 }

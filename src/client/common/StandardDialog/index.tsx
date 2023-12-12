@@ -29,7 +29,7 @@ export default function StandardDialog({
 }: StandardDialogProps) {
   return (
     <Dialog {...props} onClose={(_, reason) => onClose(reason)}>
-      <DialogTitle>
+      <DialogTitle sx={hideCloseButton ? undefined : { pr: 7 }}>
         {title}
         {!hideCloseButton && (
           <IconButton
@@ -38,7 +38,7 @@ export default function StandardDialog({
             sx={{
               position: "absolute",
               right: 8,
-              top: 14,
+              top: 13,
               color: (theme) => theme.palette.grey[500],
             }}
           >

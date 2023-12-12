@@ -2,7 +2,7 @@ import { ComponentOverride } from "../utils";
 
 const MuiFormControl: ComponentOverride["MuiFormControl"] = {
   styleOverrides: {
-    root: ({ theme }) => ({
+    root: () => ({
       "& .MuiInputLabel-root": {
         marginBottom: 7,
       },
