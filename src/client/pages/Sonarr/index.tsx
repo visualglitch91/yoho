@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { orderBy } from "lodash";
+import { keyBy, orderBy } from "lodash";
 import { useQuery } from "@tanstack/react-query";
 import { CircularProgress } from "@mui/material";
 import { api } from "$common/utils";
@@ -12,36 +12,35 @@ import { Show } from "./types";
 export default function Sonarr() {
   const [search, setSearch] = useState("");
 
-  const $series = useQuery({
+  const $series = useQuery<Show[]>({
     queryKey: ["Sonarr", "Series", search],
-    queryFn: () => {
-      return Promise.all([
-        api
-          .get(
-            search
-              ? `/sonarr/v3/series/lookup?term=${search}`
-              : "/sonarr/v3/series"
-          )
-          .then((res) =>
-            orderBy(res.data, ["sortTitle", "title"], ["asc", "asc"]).filter(
-              (it) =>
-                it.runtime !== 0 &&
-                it.images.find((it: any) => it.coverType === "poster")
-                  ?.remoteUrl &&
-                it.studio !== ""
-            )
-          ),
-        api.get("/sonarr/v3/queue/details?all=true").then((res) => res.data),
-      ]).then(([series, queue]) => {
-        const seriesInQueue = queue
-          .map((it: any) => it.seriesId)
-          .filter(Boolean);
+    queryFn: async () => {
+      const currentSeries = await api
+        .get("/sonarr/v3/series")
+        .then((res) => res.data);
 
-        return series.map((it) => ({
-          ...it,
-          downloading: seriesInQueue.includes(it.id),
-        }));
-      }) as Promise<Show[]>;
+      const downloadQueue = await api
+        .get("/sonarr/v3/queue/details?all=true")
+        .then((res) => res.data.map((it: any) => it.seriesId).filter(Boolean));
+
+      const series = search
+        ? await api
+            .get(`/sonarr/v3/series/lookup?term=${search}`)
+            .then((res) => {
+              const currentSeriesMap = keyBy(currentSeries, "tvdbId");
+
+              return res.data.map((it: any) => ({
+                ...it,
+                statistics:
+                  currentSeriesMap[it.tvdbId]?.statistics || it.statistics,
+              }));
+            })
+        : currentSeries;
+
+      return series.map((it: any) => ({
+        ...it,
+        downloading: downloadQueue.includes(it.id),
+      }));
     },
   });
 

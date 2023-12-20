@@ -13,5 +13,6 @@ export interface Game {
   name: string;
   path: string;
   platform: string;
+  genre: string;
   image?: string;
 }

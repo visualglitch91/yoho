@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+import { difference } from "lodash";
+import humanizeDuration from "humanize-duration";
 import {
   List,
   Stack,
@@ -17,13 +20,11 @@ import {
   PauseCircleOutline as PauseIcon,
 } from "@mui/icons-material";
 import { humanizeBytes, round } from "$common/utils";
-import humanizeDuration from "humanize-duration";
-import { formatProgress } from "./utils";
 import useConfirm from "$common/hooks/useConfirm";
-import { useEffect, useState } from "react";
 import CenteredMessage from "$common/CenteredMessage";
-import { difference } from "lodash";
 import Portal from "$common/Portal";
+import useIsMobile from "$common/hooks/usIsMobile";
+import { formatProgress } from "./utils";
 
 export interface Download {
   id: string;
@@ -56,6 +57,7 @@ export default function DownloadList({
   onStop?: (downloads: Download[]) => void;
   onRemove: (downloads: Download[], deleteData: boolean) => void;
 }) {
+  const isMobile = useIsMobile();
   const confirm = useConfirm();
   const canStartStop = Boolean(onStart && onStop);
   const [selected, setSelected] = useState<string[]>([]);
@@ -156,6 +158,36 @@ export default function DownloadList({
           <List sx={{ width: "100%", p: 0 }}>
             {downloads.map((download, index) => {
               const labelId = `checkbox-list-label-${download.id}`;
+              const actions = canStartStop ? (
+                <>
+                  <ListItemIcon sx={{ minWidth: 0, mr: 2 }}>
+                    {download.status === "stopped" ? (
+                      <IconButton
+                        edge="end"
+                        onClick={() => onStart!([download])}
+                      >
+                        <PlayIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        edge="end"
+                        onClick={() => onStop!([download])}
+                      >
+                        <PauseIcon />
+                      </IconButton>
+                    )}
+                  </ListItemIcon>
+
+                  <ListItemIcon>
+                    <IconButton
+                      edge="end"
+                      onClick={() => confirmRemove([download])}
+                    >
+                      <RemoveIcon />
+                    </IconButton>
+                  </ListItemIcon>
+                </>
+              ) : null;
 
               return (
                 <ListItem
@@ -181,34 +213,7 @@ export default function DownloadList({
                     />
                   </ListItemIcon>
 
-                  {canStartStop && (
-                    <ListItemIcon sx={{ minWidth: 0, mr: 2 }}>
-                      {download.status === "stopped" ? (
-                        <IconButton
-                          edge="end"
-                          onClick={() => onStart!([download])}
-                        >
-                          <PlayIcon />
-                        </IconButton>
-                      ) : (
-                        <IconButton
-                          edge="end"
-                          onClick={() => onStop!([download])}
-                        >
-                          <PauseIcon />
-                        </IconButton>
-                      )}
-                    </ListItemIcon>
-                  )}
-
-                  <ListItemIcon>
-                    <IconButton
-                      edge="end"
-                      onClick={() => confirmRemove([download])}
-                    >
-                      <RemoveIcon />
-                    </IconButton>
-                  </ListItemIcon>
+                  {!isMobile && actions}
 
                   <ListItemText
                     id={labelId}

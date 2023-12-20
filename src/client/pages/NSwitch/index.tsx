@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import {
-  Stack,
   Table,
   TableRow,
   TableBody,
@@ -15,18 +14,22 @@ import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
 import useModal from "$common/hooks/useModal";
 import StandardDialog from "$common/StandardDialog";
-import Poster from "$common/Poster";
+import MediaCard from "$common/MediaCard";
 
 export default function NSwitch() {
   const mount = useModal();
   const $games = useQuery({
     queryKey: ["Switch", "Games"],
     queryFn: () => {
-      return api
-        .get("/switch/games")
-        .then(
-          (res) => res.data as { image: string; href: string; title: string }[]
-        );
+      return api.get("/switch/games").then(
+        (res) =>
+          res.data as {
+            image: string;
+            href: string;
+            title: string;
+            files: string[];
+          }[]
+      );
     },
   });
 
@@ -38,7 +41,8 @@ export default function NSwitch() {
         </CenteredMessage>
       ) : (
         <DataGrid
-          sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
+          cursorPointer
+          disableHeaders
           rowHeight={88}
           rows={$games.data || []}
           initialState={{
@@ -51,20 +55,13 @@ export default function NSwitch() {
               flex: 1,
               minWidth: 300,
               renderCell: ({ row }) => (
-                <Stack spacing={2} direction="row" alignItems="center">
-                  <Poster height={60} src={row.image || ""} />
-                  <span>{row.title}</span>
-                </Stack>
+                <MediaCard
+                  posterHeight={60}
+                  posterSrc={row.image || ""}
+                  title={row.title}
+                  subtitle={`${row.files.length} files`}
+                />
               ),
-            },
-            {
-              field: "files",
-              headerName: "Files",
-              align: "center",
-              headerAlign: "center",
-              width: 230,
-              sortable: false,
-              valueFormatter: ({ value }) => value.length,
             },
           ]}
           onRowClick={({ row }) => {

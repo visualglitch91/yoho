@@ -1,0 +1,45 @@
+import Poster from "$common/Poster";
+import { Stack, styled } from "@mui/material";
+
+const Title = styled("span")({ fontSize: 14 });
+const Subtitle = styled("span")({ fontSize: 12 });
+
+export default function MediaCard({
+  minimal,
+  posterSrc,
+  posterHeight,
+  posterObjectFit,
+  posterAspectRatio,
+  title,
+  subtitle,
+  chip,
+}: {
+  minimal?: boolean;
+  posterSrc?: string;
+  posterHeight: number;
+  posterObjectFit?: React.ComponentProps<typeof Poster>["objectFit"];
+  posterAspectRatio?: string;
+  title: string;
+  subtitle?: string;
+  chip?: React.ReactNode;
+}) {
+  return (
+    <Stack spacing={2} direction="row" alignItems="center">
+      <Poster
+        aspectRatio={posterAspectRatio}
+        objectFit={posterObjectFit}
+        height={posterHeight}
+        src={posterSrc || ""}
+      />
+      {minimal ? (
+        <span>{title}</span>
+      ) : (
+        <Stack spacing={1} alignItems="flex-start">
+          <Title>{title}</Title>
+          <Subtitle>{subtitle}</Subtitle>
+          {chip}
+        </Stack>
+      )}
+    </Stack>
+  );
+}

@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Add } from "@mui/icons-material";
-import {
-  Box,
-  Chip,
-  Stack,
-  Alert,
-  Button,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Chip, Alert, Button, CircularProgress } from "@mui/material";
 import { api } from "$common/utils";
 import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
 import SelectField from "$common/SelectField";
 import useModal from "$common/hooks/useModal";
-import Poster from "$common/Poster";
+import MediaCard from "$common/MediaCard";
 import DataGrid from "$common/DataGrid";
+import useIsMobile from "$common/hooks/usIsMobile";
 import { Game, Status } from "./types";
 import UploadDialog from "./UploadDialog";
+import Fab from "$common/FAB";
 
 const scraperStatusColors = {
   idle: "success",
@@ -28,6 +23,7 @@ const scraperStatusColors = {
 
 export default function RG351P() {
   const mount = useModal();
+  const isMobile = useIsMobile();
   const [platform, setPlatform] = useState("NONE");
 
   const $status = useQuery({
@@ -74,9 +70,20 @@ export default function RG351P() {
     }
   }, [platform]);
 
+  const onUpload = () => {
+    mount((props) => (
+      <UploadDialog
+        {...props}
+        platforms={$status.data?.platforms || []}
+        defaultPlatform={platform}
+        onUpload={() => $games.refetch()}
+      />
+    ));
+  };
+
   return (
     <PageLayout
-      title={<>RG351P </>}
+      title="RG351P"
       actions={
         $status.data ? (
           $status.data.mounted ? (
@@ -108,22 +115,19 @@ export default function RG351P() {
                   ]}
                 />
               </Box>
-              <Button
-                variant="outlined"
-                startIcon={<Add />}
-                onClick={() => {
-                  mount((props) => (
-                    <UploadDialog
-                      {...props}
-                      platforms={$status.data?.platforms || []}
-                      defaultPlatform={platform}
-                      onUpload={() => $games.refetch()}
-                    />
-                  ));
-                }}
-              >
-                Upload
-              </Button>
+              {isMobile ? (
+                <Fab onClick={onUpload}>
+                  <Add />
+                </Fab>
+              ) : (
+                <Button
+                  variant="outlined"
+                  startIcon={<Add />}
+                  onClick={onUpload}
+                >
+                  Upload
+                </Button>
+              )}
             </>
           ) : (
             <Button
@@ -149,7 +153,7 @@ export default function RG351P() {
         </CenteredMessage>
       ) : (
         <DataGrid
-          sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
+          disableHeaders
           rowHeight={88}
           getRowId={(row) => row.path}
           rows={mounted ? $games.data || [] : []}
@@ -162,22 +166,21 @@ export default function RG351P() {
               headerName: "Title",
               flex: 1,
               renderCell: ({ row }) => (
-                <Stack spacing={2} direction="row" alignItems="center">
-                  <Poster
-                    height={60}
-                    objectFit="contain"
-                    src={
-                      row.image
-                        ? `/api/rg351p/platform/${
-                            row.platform
-                          }/media?path=${encodeURIComponent(
-                            row.image.replace("/screenshots/", "/covers/")
-                          )}`
-                        : ""
-                    }
-                  />
-                  <span>{row.name}</span>
-                </Stack>
+                <MediaCard
+                  posterHeight={60}
+                  posterObjectFit="contain"
+                  posterSrc={
+                    row.image
+                      ? `/api/rg351p/platform/${
+                          row.platform
+                        }/media?path=${encodeURIComponent(
+                          row.image.replace("/screenshots/", "/covers/")
+                        )}`
+                      : ""
+                  }
+                  title={row.name}
+                  subtitle={row.genre}
+                />
               ),
             },
           ]}

@@ -7,6 +7,8 @@ import { usePrompt } from "$common/hooks/usePrompt";
 import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
 import { Add } from "@mui/icons-material";
+import Fab from "$common/FAB";
+import useIsMobile from "$common/hooks/usIsMobile";
 
 const fallbackStatus = {
   status: "processing",
@@ -31,6 +33,7 @@ const statusMap: Record<
 
 export default function Transmission() {
   const prompt = usePrompt();
+  const isMobile = useIsMobile();
 
   const $torrents = useQuery({
     queryKey: ["Transmission", "Torrents"],
@@ -93,46 +96,61 @@ export default function Transmission() {
   };
 
   return (
-    <PageLayout
-      title="Torrent Downloads"
-      actions={
-        <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
-          Add Torrent
-        </Button>
-      }
-      header={
-        <Box
-          sx={(theme) => ({
-            margin: theme.spacing(0, -6, -2),
-            "& .MuiAlert-root": { borderRadius: 0 },
-          })}
-          id="transmission__selection-alert"
-        />
-      }
-    >
-      {typeof $torrents.data === "undefined" ? (
-        <CenteredMessage>
-          <CircularProgress color="primary" />
-        </CenteredMessage>
-      ) : (
-        <DownloadList
-          downloads={$torrents.data.map((it) => ({
-            id: String(it.id),
-            eta: it.eta,
-            name: it.name,
-            progress: it.percentDone,
-            status: statusMap[it.status]?.status ?? fallbackStatus.status,
-            statusInfo: statusMap[it.status]?.info ?? fallbackStatus.info,
-            completed: it.percentDone === 1,
-            total: it.sizeWhenDone,
-            downloadRate: Math.max(0, it.rateDownload),
-          }))}
-          selectionAlertPortalId="transmission__selection-alert"
-          onStart={onStart}
-          onStop={onStop}
-          onRemove={onRemove}
-        />
+    <>
+      {isMobile && (
+        <Fab onClick={onAdd}>
+          <Add />
+        </Fab>
       )}
-    </PageLayout>
+      <PageLayout
+        disableHeaderSpacing
+        title="Torrent Downloads"
+        actions={
+          !isMobile && (
+            <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
+              Add Torrent
+            </Button>
+          )
+        }
+        header={
+          <div>
+            <Box
+              sx={(theme) => ({
+                margin: {
+                  xs: theme.spacing(2, -2, -2),
+                  md: theme.spacing(4, -6, -4),
+                },
+                "& .MuiAlert-root": { borderRadius: 0 },
+              })}
+              id="transmission__selection-alert"
+            />
+          </div>
+        }
+      >
+        {typeof $torrents.data === "undefined" ? (
+          <CenteredMessage>
+            <CircularProgress color="primary" />
+          </CenteredMessage>
+        ) : (
+          <DownloadList
+            downloads={$torrents.data.map((it) => ({
+              id: String(it.id),
+              eta: it.eta,
+              name: it.name,
+              progress: it.percentDone,
+              status: statusMap[it.status]?.status ?? fallbackStatus.status,
+              statusInfo: statusMap[it.status]?.info ?? fallbackStatus.info,
+              completed: it.percentDone === 1,
+              total: it.sizeWhenDone,
+              downloadRate: Math.max(0, it.rateDownload),
+            }))}
+            selectionAlertPortalId="transmission__selection-alert"
+            onStart={onStart}
+            onStop={onStop}
+            onRemove={onRemove}
+          />
+        )}
+      </PageLayout>
+    </>
   );
 }

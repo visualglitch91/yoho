@@ -61,6 +61,11 @@ export default function UploadDialog({
   return (
     <StandardDialog
       {...props}
+      sx={{
+        "& .MuiDialogContent-root": {
+          minWidth: { xs: "80vw", md: "600px" },
+        },
+      }}
       maxWidth={false}
       onClose={onClose}
       title="Upload ROM"
@@ -96,7 +101,7 @@ export default function UploadDialog({
         );
       }}
     >
-      <Stack spacing={2} sx={{ minWidth: { xs: "80vw", sm: "600px" } }}>
+      <Stack spacing={2}>
         <TextField
           type="file"
           name="file"

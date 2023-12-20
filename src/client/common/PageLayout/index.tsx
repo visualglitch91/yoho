@@ -32,11 +32,13 @@ export default function PageLayout({
   actions,
   header,
   children,
+  disableHeaderSpacing,
 }: {
   title: React.ReactNode;
   actions?: React.ReactNode;
   header?: React.ReactNode;
   children?: React.ReactNode;
+  disableHeaderSpacing?: boolean;
 }) {
   const isMobile = useIsMobile();
 
@@ -74,8 +76,8 @@ export default function PageLayout({
           {!isMobile && actionsElement}
         </Stack>
         <Stack
-          spacing={{ xs: 1, md: 2 }}
-          mt={{ xs: 1, md: 2 }}
+          spacing={disableHeaderSpacing ? 0 : { xs: 1, md: 2 }}
+          mt={disableHeaderSpacing ? 0 : { xs: 1, md: 2 }}
           sx={{ "&:empty": { display: "none" } }}
         >
           {isMobile && actionsElement}

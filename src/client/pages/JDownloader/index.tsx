@@ -60,13 +60,18 @@ export default function JDownloader() {
         </Button>
       }
       header={
-        <Box
-          sx={(theme) => ({
-            margin: theme.spacing(0, -6, -2),
-            "& .MuiAlert-root": { borderRadius: 0 },
-          })}
-          id="jdownloader__selection-alert"
-        />
+        <div>
+          <Box
+            sx={(theme) => ({
+              margin: {
+                xs: theme.spacing(2, -2, -2),
+                md: theme.spacing(4, -6, -4),
+              },
+              "& .MuiAlert-root": { borderRadius: 0 },
+            })}
+            id="jdownloader__selection-alert"
+          />
+        </div>
       }
     >
       {typeof $downloads.data === "undefined" ? (

@@ -1,17 +1,13 @@
 import { useMemo } from "react";
 import { keyBy } from "lodash";
-import { Chip, Stack, Checkbox, Alert } from "@mui/material";
+import { Checkbox, Alert } from "@mui/material";
 import CenteredMessage from "$common/CenteredMessage";
-import Poster from "$common/Poster";
 import DataGrid from "$common/DataGrid";
+import useIsMobile from "$common/hooks/usIsMobile";
+import MediaCard from "$common/MediaCard";
 import { Show } from "./types";
 import useConfig from "./useConfig";
-
-function getPercent(show: Show) {
-  return show.statistics.episodeCount === 0
-    ? 100
-    : (show.statistics.episodeFileCount / show.statistics.episodeCount) * 100;
-}
+import ShowStatus from "./ShowStatus";
 
 export default function ShowsTable({
   shows,
@@ -21,11 +17,26 @@ export default function ShowsTable({
   onSelect: (movie: Show) => void;
 }) {
   const config = useConfig();
+  const isMobile = useIsMobile();
 
   const qualityProfileMap = useMemo(
     () => keyBy(config?.qualityProfiles, "id") || {},
     [config?.qualityProfiles]
   );
+
+  const getQualityProfile = (show: Show) => {
+    return show.qualityProfileId
+      ? qualityProfileMap[show.qualityProfileId]?.name
+      : undefined;
+  };
+
+  const getDownloaded = (show: Show) => {
+    if (show.statistics.episodeCount === 0) {
+      return undefined;
+    }
+
+    return `${show.statistics.episodeFileCount} / ${show.statistics.episodeCount}`;
+  };
 
   if (shows.length === 0) {
     return (
@@ -37,13 +48,21 @@ export default function ShowsTable({
 
   return (
     <DataGrid
-      sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
-      rowHeight={68}
+      cursorPointer
+      rowHeight={isMobile ? 120 : 68}
       rows={shows}
+      getRowId={(row) => row.id || row.tvdbId}
       initialState={{
         sorting: { sortModel: [{ field: "sortTitle", sort: "asc" }] },
       }}
       onRowClick={({ row }) => onSelect(row)}
+      disableHeaders={isMobile}
+      columnVisibilityModel={{
+        qualityProfile: !isMobile,
+        downloaded: !isMobile,
+        monitored: !isMobile,
+        ended: !isMobile,
+      }}
       columns={[
         {
           field: "sortTitle",
@@ -56,10 +75,21 @@ export default function ShowsTable({
             )?.remoteUrl;
 
             return (
-              <Stack spacing={2} direction="row" alignItems="center">
-                <Poster aspectRatio="2/3" height={50} src={poster || ""} />
-                <span>{row.title}</span>
-              </Stack>
+              <MediaCard
+                minimal={!isMobile}
+                posterSrc={poster || ""}
+                posterHeight={isMobile ? 90 : 50}
+                posterAspectRatio="2/3"
+                title={row.title}
+                subtitle={[
+                  row.ended ? "Ended" : "Continuing",
+                  getQualityProfile(row),
+                  getDownloaded(row),
+                ]
+                  .filter(Boolean)
+                  .join(" • ")}
+                chip={<ShowStatus show={row} />}
+              />
             );
           },
         },
@@ -70,10 +100,7 @@ export default function ShowsTable({
           headerAlign: "center",
           width: 200,
           sortable: false,
-          valueGetter: ({ row }) =>
-            row.qualityProfileId
-              ? qualityProfileMap[row.qualityProfileId]?.name
-              : "-",
+          valueGetter: ({ row }) => getQualityProfile(row) || "-",
         },
         {
           field: "ended",
@@ -90,8 +117,7 @@ export default function ShowsTable({
           align: "center",
           headerAlign: "center",
           width: 200,
-          renderCell: ({ row }) =>
-            `${row.statistics.episodeFileCount} / ${row.statistics.episodeCount}`,
+          renderCell: ({ row }) => getDownloaded(row) || "-",
         },
         {
           field: "monitored",
@@ -100,38 +126,7 @@ export default function ShowsTable({
           headerAlign: "center",
           width: 160,
           sortable: false,
-          renderCell: ({ row }) => {
-            const percent = getPercent(row);
-
-            return (
-              <Chip
-                size="small"
-                sx={{ fontSize: 11, fontWeight: 600 }}
-                color={
-                  !row.path
-                    ? "warning"
-                    : row.downloading
-                    ? "primary"
-                    : percent === 100
-                    ? "success"
-                    : percent > 0
-                    ? "info"
-                    : "error"
-                }
-                label={
-                  !row.path
-                    ? "Unmonitored"
-                    : row.downloading
-                    ? "Downloading"
-                    : percent === 100
-                    ? "All Available"
-                    : percent > 0
-                    ? "Some Available"
-                    : "Unavailable"
-                }
-              />
-            );
-          },
+          renderCell: ({ row }) => <ShowStatus show={row} />,
         },
       ]}
     />

@@ -1,5 +1,6 @@
 export interface Show {
   id: string;
+  tvdbId: string;
   title: string;
   sortTitle: string;
   downloading: boolean;

@@ -1,11 +1,13 @@
 import { keyBy } from "lodash";
 import { useMemo } from "react";
-import { Chip, Stack, Alert } from "@mui/material";
+import { Alert } from "@mui/material";
 import CenteredMessage from "$common/CenteredMessage";
 import DataGrid from "$common/DataGrid";
-import Poster from "$common/Poster";
+import MediaCard from "$common/MediaCard";
+import useIsMobile from "$common/hooks/usIsMobile";
 import { Movie } from "./types";
 import useConfig from "./useConfig";
+import MovieStatus from "./MovieStatus";
 
 export default function MovieTable({
   movies,
@@ -15,11 +17,20 @@ export default function MovieTable({
   onSelect: (movie: Movie) => void;
 }) {
   const config = useConfig();
+  const isMobile = useIsMobile();
 
   const qualityProfileMap = useMemo(
     () => keyBy(config?.qualityProfiles, "id") || {},
     [config?.qualityProfiles]
   );
+
+  const getQualityProfile = (movie: Movie) => {
+    return (
+      (movie.qualityProfileId
+        ? qualityProfileMap[movie.qualityProfileId]?.name
+        : undefined) || "-"
+    );
+  };
 
   if (movies.length === 0) {
     return (
@@ -31,13 +42,18 @@ export default function MovieTable({
 
   return (
     <DataGrid
-      sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
-      rowHeight={68}
+      cursorPointer
+      rowHeight={isMobile ? 120 : 68}
       rows={movies}
       initialState={{
         sorting: { sortModel: [{ field: "sortTitle", sort: "asc" }] },
       }}
       onRowClick={({ row }) => onSelect(row)}
+      disableHeaders={isMobile}
+      columnVisibilityModel={{
+        qualityProfile: !isMobile,
+        monitored: !isMobile,
+      }}
       columns={[
         {
           field: "sortTitle",
@@ -50,10 +66,15 @@ export default function MovieTable({
             )?.remoteUrl;
 
             return (
-              <Stack spacing={2} direction="row" alignItems="center">
-                <Poster aspectRatio="2/3" height={50} src={poster || ""} />
-                <span>{row.title}</span>
-              </Stack>
+              <MediaCard
+                minimal={!isMobile}
+                posterSrc={poster || ""}
+                posterAspectRatio="2/3"
+                posterHeight={isMobile ? 90 : 50}
+                title={row.title}
+                subtitle={getQualityProfile(row)}
+                chip={<MovieStatus movie={row} />}
+              />
             );
           },
         },
@@ -64,10 +85,7 @@ export default function MovieTable({
           headerAlign: "center",
           width: 230,
           sortable: false,
-          valueGetter: ({ row }) =>
-            row.qualityProfileId
-              ? qualityProfileMap[row.qualityProfileId]?.name
-              : "-",
+          valueGetter: ({ row }) => getQualityProfile(row),
         },
         {
           field: "monitored",
@@ -76,30 +94,7 @@ export default function MovieTable({
           headerAlign: "center",
           width: 130,
           sortable: false,
-          renderCell: ({ row }) => (
-            <Chip
-              size="small"
-              sx={{ fontSize: 11, fontWeight: 600 }}
-              color={
-                !row.monitored
-                  ? "warning"
-                  : row.hasFile
-                  ? "success"
-                  : row.downloading
-                  ? "primary"
-                  : "error"
-              }
-              label={
-                !row.monitored
-                  ? "Unmonitored"
-                  : row.hasFile
-                  ? "Available"
-                  : row.downloading
-                  ? "Downloading"
-                  : "Monitored"
-              }
-            />
-          ),
+          renderCell: ({ row }) => <MovieStatus movie={row} />,
         },
       ]}
     />
