@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { keyBy, orderBy } from "lodash";
+import { keyBy } from "lodash";
 import { useQuery } from "@tanstack/react-query";
 import { CircularProgress } from "@mui/material";
 import { api } from "$common/utils";
