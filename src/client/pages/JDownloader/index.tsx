@@ -7,9 +7,12 @@ import DownloadList, { Download } from "$common/DownloadList";
 import { usePrompt } from "$common/hooks/usePrompt";
 import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
+import useIsMobile from "$common/hooks/usIsMobile";
+import Fab from "$common/FAB";
 
 export default function JDownloader() {
   const prompt = usePrompt();
+  const isMobile = useIsMobile();
 
   const $downloads = useQuery({
     queryKey: ["JDownloader", "Downloads"],
@@ -52,64 +55,73 @@ export default function JDownloader() {
   };
 
   return (
-    <PageLayout
-      title="Web Downloads"
-      actions={
-        <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
-          Add Torrent
-        </Button>
-      }
-      header={
-        <div>
-          <Box
-            sx={(theme) => ({
-              margin: {
-                xs: theme.spacing(2, -2, -2),
-                md: theme.spacing(4, -6, -4),
-              },
-              "& .MuiAlert-root": { borderRadius: 0 },
-            })}
-            id="jdownloader__selection-alert"
-          />
-        </div>
-      }
-    >
-      {typeof $downloads.data === "undefined" ? (
-        <CenteredMessage>
-          <CircularProgress color="primary" />
-        </CenteredMessage>
-      ) : (
-        <DownloadList
-          downloads={$downloads.data.map((it) => {
-            const processing = Boolean(it.availability);
-            const offline = it.availability === "OFFLINE";
-
-            return {
-              id: String(it.uuid),
-              eta: it.eta,
-              name: it.name,
-              progress: processing ? -1 : it.bytesLoaded / it.bytesTotal,
-              status: offline
-                ? "error"
-                : processing
-                ? "processing"
-                : it.finished
-                ? "stopped"
-                : "downloading",
-              statusInfo: offline
-                ? "Offline"
-                : processing
-                ? "Processing"
-                : it.status,
-              completed: it.finished,
-              total: processing ? -1 : it.bytesTotal,
-              downloadRate: Math.max(0, it.speed),
-            };
-          })}
-          selectionAlertPortalId="jdownloader__selection-alert"
-          onRemove={onRemove}
-        />
+    <>
+      {isMobile && (
+        <Fab onClick={onAdd}>
+          <Add />
+        </Fab>
       )}
-    </PageLayout>
+      <PageLayout
+        title="Web Downloads"
+        actions={
+          !isMobile && (
+            <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
+              Add Torrent
+            </Button>
+          )
+        }
+        header={
+          <div>
+            <Box
+              sx={(theme) => ({
+                margin: {
+                  xs: theme.spacing(2, -2, -2),
+                  md: theme.spacing(4, -6, -4),
+                },
+                "& .MuiAlert-root": { borderRadius: 0 },
+              })}
+              id="jdownloader__selection-alert"
+            />
+          </div>
+        }
+      >
+        {typeof $downloads.data === "undefined" ? (
+          <CenteredMessage>
+            <CircularProgress color="primary" />
+          </CenteredMessage>
+        ) : (
+          <DownloadList
+            downloads={$downloads.data.map((it) => {
+              const processing = Boolean(it.availability);
+              const offline = it.availability === "OFFLINE";
+
+              return {
+                id: String(it.uuid),
+                eta: it.eta,
+                name: it.name,
+                progress: processing ? -1 : it.bytesLoaded / it.bytesTotal,
+                status: offline
+                  ? "error"
+                  : processing
+                  ? "processing"
+                  : it.finished
+                  ? "stopped"
+                  : "downloading",
+                statusInfo: offline
+                  ? "Offline"
+                  : processing
+                  ? "Processing"
+                  : it.status,
+                completed: it.finished,
+                total: processing ? -1 : it.bytesTotal,
+                downloadRate: Math.max(0, it.speed),
+              };
+            })}
+            selectionAlertPortalId="jdownloader__selection-alert"
+            onRemove={onRemove}
+          />
+        )}
+      </PageLayout>
+    </>
   );
 }
