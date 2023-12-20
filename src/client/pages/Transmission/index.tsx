@@ -94,7 +94,7 @@ export default function Transmission() {
 
   return (
     <PageLayout
-      title="Transmission"
+      title="Torrent Downloads"
       actions={
         <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
           Add Torrent

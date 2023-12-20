@@ -25,7 +25,7 @@ export default function Prowlarr() {
 
   return (
     <PageLayout
-      title="Prowlarr"
+      title="Torrent Search"
       header={
         <SearchBar
           onSearch={(term) => {

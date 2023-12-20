@@ -62,7 +62,7 @@ export default function Sonarr() {
 
   return (
     <PageLayout
-      title="Sonarr"
+      title="TV Shows"
       header={
         <SearchBar
           onSearch={(term) => {

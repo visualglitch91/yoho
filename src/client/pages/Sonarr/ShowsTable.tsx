@@ -7,6 +7,7 @@ const Poster = styled("img")(({ theme }) => ({
   width: 30,
   objectFit: "cover",
   background: theme.palette.background.default,
+  textIndent: "-10000px", // Hide broken image indicator
 }));
 
 function getPercent(show: Show) {
@@ -48,7 +49,7 @@ export default function ShowsTable({
 
             return (
               <Stack spacing={2} direction="row" alignItems="center">
-                {poster && <Poster src={poster} />}
+                <Poster src={poster || ""} />
                 <span>{row.title}</span>
               </Stack>
             );

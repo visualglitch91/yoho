@@ -48,7 +48,7 @@ export default function Radarr() {
 
   return (
     <PageLayout
-      title="Radarr"
+      title="Movies"
       header={
         <SearchBar
           onSearch={(term) => {

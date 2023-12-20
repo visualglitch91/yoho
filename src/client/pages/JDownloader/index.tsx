@@ -53,7 +53,7 @@ export default function JDownloader() {
 
   return (
     <PageLayout
-      title="JDownloader"
+      title="Web Downloads"
       actions={
         <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
           Add Torrent

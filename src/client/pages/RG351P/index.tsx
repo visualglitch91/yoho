@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { DataGrid } from "@mui/x-data-grid";
 import { Add } from "@mui/icons-material";
-import { CircularProgress, Button } from "@mui/material";
+import { CircularProgress, Button, Chip, styled, Stack } from "@mui/material";
 import { api } from "$common/utils";
 import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
@@ -11,6 +11,21 @@ import useModal from "$common/hooks/useModal";
 import { Game, Status } from "./types";
 import UploadDialog from "./UploadDialog";
 
+const scraperStatusColors = {
+  idle: "success",
+  "scraping-all": "warning",
+  "scraping-game": "warning",
+  unkown: "error",
+} as const;
+
+const Poster = styled("img")(({ theme }) => ({
+  aspectRatio: "1/1",
+  height: 50,
+  objectFit: "contain",
+  background: theme.palette.background.default,
+  textIndent: "-10000px", // Hide broken image indicator
+}));
+
 export default function RG351P() {
   const mount = useModal();
   const [platform, setPlatform] = useState("NONE");
@@ -18,10 +33,11 @@ export default function RG351P() {
   const $status = useQuery({
     queryKey: ["RG351P", "Status"],
     queryFn: () => api.get("/rg351p/status").then((res) => res.data as Status),
-    refetchInterval: 1_000,
+    refetchInterval: 5_000,
   });
 
   const mounted = $status?.data?.mounted || false;
+  const scraperStatus = $status.data?.scraperStatus || "unkown";
 
   const $games = useQuery({
     enabled: platform !== "NONE",
@@ -46,7 +62,16 @@ export default function RG351P() {
 
   return (
     <PageLayout
-      title="RG351P"
+      title={
+        <>
+          RG351P{" "}
+          <Chip
+            color={scraperStatusColors[scraperStatus]}
+            label={scraperStatus.split("-").join(" ")}
+            sx={{ textTransform: "capitalize" }}
+          />
+        </>
+      }
       actions={
         $status.data && $status.data.mounted ? (
           <>
@@ -98,7 +123,7 @@ export default function RG351P() {
         )
       }
     >
-      {$status.isLoading ? (
+      {!$status.data ? (
         <CenteredMessage>
           <CircularProgress color="primary" />
         </CenteredMessage>
@@ -110,7 +135,7 @@ export default function RG351P() {
           disableColumnFilter
           disableColumnSelector
           rowSelection={false}
-          rowHeight={60}
+          rowHeight={80}
           getRowId={(row) => row.path}
           rows={$games.data || []}
           initialState={{
@@ -121,6 +146,19 @@ export default function RG351P() {
               field: "name",
               headerName: "Title",
               flex: 1,
+              renderCell: ({ row }) => (
+                <Stack spacing={2} direction="row" alignItems="center">
+                  <Poster
+                    loading="lazy"
+                    src={
+                      row.thumbnail
+                        ? `/api/rg351p/platform/${row.platform}/media?path=${row.thumbnail}`
+                        : ""
+                    }
+                  />
+                  <span>{row.name}</span>
+                </Stack>
+              ),
             },
           ]}
         />

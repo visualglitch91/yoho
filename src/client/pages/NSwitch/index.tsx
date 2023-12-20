@@ -19,9 +19,10 @@ import StandardDialog from "$common/StandardDialog";
 
 const Poster = styled("img")(({ theme }) => ({
   aspectRatio: "1/1",
-  width: 30,
+  height: 50,
   objectFit: "cover",
   background: theme.palette.background.default,
+  textIndent: "-10000px", // Hide broken image indicator
 }));
 
 export default function NSwitch() {
@@ -51,7 +52,7 @@ export default function NSwitch() {
           disableColumnFilter
           disableColumnSelector
           rowSelection={false}
-          rowHeight={60}
+          rowHeight={80}
           rows={$games.data || []}
           initialState={{
             sorting: { sortModel: [{ field: "title", sort: "asc" }] },
@@ -61,16 +62,12 @@ export default function NSwitch() {
               field: "title",
               headerName: "Title",
               flex: 1,
-              renderCell: ({ row }) => {
-                const poster = row.image;
-
-                return (
-                  <Stack spacing={2} direction="row" alignItems="center">
-                    {poster && <Poster src={poster} />}
-                    <span>{row.title}</span>
-                  </Stack>
-                );
-              },
+              renderCell: ({ row }) => (
+                <Stack spacing={2} direction="row" alignItems="center">
+                  <Poster src={row.image || ""} />
+                  <span>{row.title}</span>
+                </Stack>
+              ),
             },
             {
               field: "files",
