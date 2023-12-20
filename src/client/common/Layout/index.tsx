@@ -48,7 +48,7 @@ export default function Layout({
     <>
       {mobileDrawer}
       <Box
-        sx={{ height: "100vh", display: "flex", maxWidth: 1600, mx: "auto" }}
+        sx={{ height: "100svh", display: "flex", maxWidth: 1600, mx: "auto" }}
       >
         <Box
           display={{ xs: "none", md: "block" }}
