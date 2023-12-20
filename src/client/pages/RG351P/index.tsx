@@ -37,6 +37,7 @@ export default function RG351P() {
   });
 
   const mounted = $status?.data?.mounted || false;
+  const platforms = $status?.data?.platforms || [];
   const scraperStatus = $status.data?.scraperStatus || "unkown";
 
   const $games = useQuery({
@@ -55,8 +56,22 @@ export default function RG351P() {
   });
 
   useEffect(() => {
-    setPlatform("NONE");
+    if (mounted) {
+      const platform = window.localStorage.getItem("rg351p_platform");
+
+      if (platform && platforms.some((it) => it.name === platform)) {
+        setPlatform(platform);
+      }
+    } else {
+      setPlatform("NONE");
+    }
   }, [mounted]);
+
+  useEffect(() => {
+    if (platform !== "NONE") {
+      window.localStorage.setItem("rg351p_platform", platform);
+    }
+  }, [platform]);
 
   return (
     <PageLayout
@@ -85,7 +100,7 @@ export default function RG351P() {
                       value: "NONE",
                       disabled: true,
                     },
-                    ...$status.data.platforms
+                    ...platforms
                       .filter((it) => it.enabled)
                       .map((it) => ({
                         label: it.name,
