@@ -1,7 +1,13 @@
 import Poster from "$common/Poster";
 import { Stack, styled } from "@mui/material";
 
-const Title = styled("span")({ fontSize: 14 });
+const Title = styled("span")({
+  fontSize: 14,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  maxWidth: "100%",
+});
+
 const Subtitle = styled("span")({ fontSize: 12 });
 
 export default function MediaCard({
@@ -24,7 +30,12 @@ export default function MediaCard({
   chip?: React.ReactNode;
 }) {
   return (
-    <Stack spacing={2} direction="row" alignItems="center">
+    <Stack
+      spacing={2}
+      direction="row"
+      alignItems="center"
+      sx={{ overflow: "hidden" }}
+    >
       <Poster
         aspectRatio={posterAspectRatio}
         objectFit={posterObjectFit}
@@ -34,7 +45,7 @@ export default function MediaCard({
       {minimal ? (
         <span>{title}</span>
       ) : (
-        <Stack spacing={1} alignItems="flex-start">
+        <Stack spacing={1} alignItems="flex-start" sx={{ overflow: "hidden" }}>
           <Title>{title}</Title>
           <Subtitle>{subtitle}</Subtitle>
           {chip}

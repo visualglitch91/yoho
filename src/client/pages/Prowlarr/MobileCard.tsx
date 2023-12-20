@@ -6,6 +6,11 @@ import DownloadButton from "./DownloadButton";
 const Title = styled("a")({
   fontSize: 14,
   whiteSpace: "normal",
+  overflow: "hidden",
+  display: "-webkit-box",
+  WebkitLineClamp: 2,
+  lineClamp: 2,
+  WebkitBoxOrient: "vertical",
 });
 
 const Subtitle = styled("span")({
@@ -21,7 +26,7 @@ export default function MobileCard({ torrent }: { torrent: Torrent }) {
       justifyContent="space-between"
       sx={{ flexGrow: 1, px: 2 }}
     >
-      <Stack spacing={1} alignItems="flex-start" sx={{ overflow: "hidden" }}>
+      <Stack spacing={0.8} alignItems="flex-start" sx={{ overflow: "hidden" }}>
         <Title href={torrent.guid} target="_blank" style={{ color: "inherit" }}>
           {torrent.title}
         </Title>
