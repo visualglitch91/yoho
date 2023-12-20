@@ -13,5 +13,5 @@ export interface Game {
   name: string;
   path: string;
   platform: string;
-  thumbnail?: string;
+  image?: string;
 }

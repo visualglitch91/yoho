@@ -151,8 +151,13 @@ export default function RG351P() {
                   <Poster
                     loading="lazy"
                     src={
-                      row.thumbnail
-                        ? `/api/rg351p/platform/${row.platform}/media?path=${row.thumbnail}`
+                      row.image
+                        ? `/api/rg351p/platform/${
+                            row.platform
+                          }/media?path=${row.image.replace(
+                            "/screenshots/",
+                            "/covers/"
+                          )}`
                         : ""
                     }
                   />
