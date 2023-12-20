@@ -13,6 +13,7 @@ import Prowlarr from "$pages/Prowlarr";
 import Transmission from "$pages/Transmission";
 import JDownloader from "$pages/JDownloader";
 import NSwitch from "$pages/NSwitch";
+import RG351P from "$pages/RG351P";
 
 const DefaultRoute = () => <Redirect to="/radarr" />;
 
@@ -21,17 +22,17 @@ export default function YoHo() {
     <Layout
       menu={[
         {
-          title: "Radarr",
+          title: "Movies",
           to: "/radarr",
           icon: <MovieIcon />,
         },
         {
-          title: "Sonarr",
+          title: "TV Shows",
           to: "/sonarr",
           icon: <LiveTvIcon />,
         },
         {
-          title: "Switch Games",
+          title: "Nintentdo Switch",
           to: "/switch",
           icon: (
             <Box
@@ -46,17 +47,35 @@ export default function YoHo() {
           ),
         },
         {
-          title: "Prowlarr",
+          title: "RG351P",
+          to: "/rg351p",
+          icon: (
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              width="1.5rem"
+              height="1.5rem"
+            >
+              <img
+                src="/icons/handheld-white.png"
+                style={{ width: "1.8rem" }}
+              />
+            </Box>
+          ),
+        },
+        {
+          title: "Torrent Search",
           to: "/prowlarr",
           icon: <SearchIcon />,
         },
         {
-          title: "Transmission",
+          title: "Torrent Downloads",
           to: "/transmission",
           icon: <DownloadIcon />,
         },
         {
-          title: "JDownloader",
+          title: "Web Downloads",
           to: "/jdownloader",
           icon: (
             <Box
@@ -82,6 +101,7 @@ export default function YoHo() {
         <Route path="/transmission" component={Transmission} />
         <Route path="/jdownloader" component={JDownloader} />
         <Route path="/switch" component={NSwitch} />
+        <Route path="/rg351p" component={RG351P} />
         <Route path="/" component={DefaultRoute} />
       </Switch>
     </Layout>

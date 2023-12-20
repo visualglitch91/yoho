@@ -82,35 +82,32 @@ const api = new MyJdApi(
   env.JDOWNLOADER_DEVICE
 );
 
-api.connect();
+api.connect().catch(console.error);
 
 // Keep connection alive
 setInterval(() => {
-  api.getLinks();
+  api.getLinks().catch(console.error);
 }, 10 * 60_000);
 
-jdownloader.get("/downloads", async (_, res) => {
-  try {
-    res.send(await api.getLinks());
-  } catch (err: any) {
-    res.status(500).send(err?.message);
-  }
+jdownloader.get("/downloads", (_, res) => {
+  api.getLinks().then(
+    (data) => res.send(data),
+    (err) => res.status(500).send(err?.message)
+  );
 });
 
-jdownloader.post("/add", async ({ body }, res) => {
-  try {
-    res.send(await api.addLink(body.url));
-  } catch (err: any) {
-    res.status(500).send(err?.message);
-  }
+jdownloader.post("/add", ({ body }, res) => {
+  api.addLink(body.url).then(
+    (data) => res.send(data),
+    (err) => res.status(500).send(err?.message)
+  );
 });
 
-jdownloader.post("/delete", async ({ body }, res) => {
-  try {
-    res.send(await api.deleteLinks(body.ids));
-  } catch (err: any) {
-    res.status(500).send(err?.message);
-  }
+jdownloader.post("/delete", ({ body }, res) => {
+  api.deleteLinks(body.ids).then(
+    (data) => res.send(data),
+    (err) => res.status(500).send(err?.message)
+  );
 });
 
 export default jdownloader;

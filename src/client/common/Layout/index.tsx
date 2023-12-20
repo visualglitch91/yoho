@@ -1,7 +1,36 @@
-import { Box, AppBar, Toolbar, IconButton } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material/";
+import { Box, Container, Paper, styled } from "@mui/material";
 import useDrawer, { useDrawerProps } from "./useDrawer";
-import { PORTAL_ID } from "./AppBar";
+
+const PaddedContent = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(6, 3),
+}));
+
+const PageContent = styled(Box)({
+  position: "relative",
+  overflow: "auto",
+  display: "flex",
+  flexDirection: "column",
+  zIndex: 1,
+  flexGrow: 1,
+});
+
+export const PaddedPageContent = styled(PageContent)(({ theme }) => ({
+  padding: theme.spacing(4, 6),
+  flexGrow: 1,
+}));
+
+const PageWrapper = styled(PaddedContent)({
+  flexGrow: 1,
+  display: "flex",
+  overflow: "hidden",
+});
+
+const Page = styled(Paper)({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
+});
 
 export default function Layout({
   menu,
@@ -9,66 +38,20 @@ export default function Layout({
 }: useDrawerProps & {
   children: React.ReactNode;
 }) {
-  const { toggleDrawer, drawer, drawerHeader } = useDrawer({
-    menu,
-  });
+  const { drawer } = useDrawer({ menu });
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <AppBar
-        elevation={0}
-        position="fixed"
-        sx={{ zIndex: 2, backgroundColor: "#020202", px: "7px" }}
-      >
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={toggleDrawer}
-            edge="start"
-            sx={{ mr: "30px" }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <div id={PORTAL_ID} />
-        </Toolbar>
-      </AppBar>
-      {drawer}
-      <Box
-        sx={{
-          minHeight: "100vh",
-          flexGrow: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        {drawerHeader}
-        <Box
-          component="main"
-          sx={{
-            p: 1,
-            flexGrow: 1,
-            position: "relative",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box
-            component="main"
-            sx={{
-              p: 2,
-              flexGrow: 1,
-              position: "relative",
-              display: "flex",
-              flexDirection: "column",
-              background: "#111017",
-              borderRadius: "4px",
-            }}
-          >
-            {children}
-          </Box>
+    <Container maxWidth="xl" sx={{ height: "100vh", display: "flex" }}>
+      <Box width={340} flexShrink={0}>
+        <Box position="sticky" top={0} maxHeight="100vh" overflow="auto">
+          <PaddedContent>{drawer}</PaddedContent>
         </Box>
       </Box>
-    </Box>
+      <Box flexGrow={1} display="flex">
+        <PageWrapper>
+          <Page>{children}</Page>
+        </PageWrapper>
+      </Box>
+    </Container>
   );
 }

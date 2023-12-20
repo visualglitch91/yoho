@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { orderBy } from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import { Box, CircularProgress } from "@mui/material";
-import AppBar from "$common/Layout/AppBar";
-import MediaItem from "$common/MediaItem";
+import { CircularProgress } from "@mui/material";
 import useModal from "$common/hooks/useModal";
 import { api } from "$common/utils";
 import CenteredMessage from "$common/CenteredMessage";
 import SearchBar from "$common/SearchBar";
 import { Movie } from "./types";
 import MovieDialog from "./MovieDialog";
+import MovieTable from "./MovieTable";
+import PageLayout from "$common/PageLayout";
 
 export default function Radarr() {
   const mount = useModal();
@@ -47,55 +47,38 @@ export default function Radarr() {
   });
 
   return (
-    <>
-      <AppBar title="Radarr" />
-
-      <SearchBar
-        onSearch={(term) => {
-          if (search === term) {
-            $movies.refetch();
-          } else {
-            setSearch(term);
-          }
-        }}
-      />
-
+    <PageLayout
+      title="Radarr"
+      header={
+        <SearchBar
+          onSearch={(term) => {
+            if (search === term) {
+              $movies.refetch();
+            } else {
+              setSearch(term);
+            }
+          }}
+        />
+      }
+    >
       {$movies.isLoading ? (
         <CenteredMessage>
           <CircularProgress color="primary" />
         </CenteredMessage>
       ) : (
-        <Box display="flex" flexWrap="wrap" gap={2}>
-          {($movies.data || []).map((movie) => (
-            <MediaItem
-              key={movie.id}
-              poster={
-                movie.images.find((it) => it.coverType === "poster")
-                  ?.remoteUrl || ""
-              }
-              title={movie.title}
-              color={
-                !movie.monitored
-                  ? "warning"
-                  : movie.hasFile
-                  ? "success"
-                  : movie.downloading
-                  ? "primary"
-                  : "error"
-              }
-              onClick={() =>
-                mount((props) => (
-                  <MovieDialog
-                    {...props}
-                    movie={movie}
-                    requestRefetch={$movies.refetch}
-                  />
-                ))
-              }
-            />
-          ))}
-        </Box>
+        <MovieTable
+          movies={$movies.data || []}
+          onSelect={(movie) =>
+            mount((props) => (
+              <MovieDialog
+                {...props}
+                movie={movie}
+                requestRefetch={$movies.refetch}
+              />
+            ))
+          }
+        />
       )}
-    </>
+    </PageLayout>
   );
 }

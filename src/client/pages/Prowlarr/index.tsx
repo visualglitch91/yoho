@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CircularProgress } from "@mui/material";
 import CenteredMessage from "$common/CenteredMessage";
-import AppBar from "$common/Layout/AppBar";
 import { api } from "$common/utils";
 import SearchBar from "$common/SearchBar";
 import ResultsTable from "./ResultsTable";
 import { Torrent } from "./types";
+import PageLayout from "$common/PageLayout";
 
 export default function Prowlarr() {
   const [search, setSearch] = useState("");
@@ -24,19 +24,20 @@ export default function Prowlarr() {
   });
 
   return (
-    <>
-      <AppBar title="Prowlarr" />
-
-      <SearchBar
-        onSearch={(term) => {
-          if (search === term) {
-            $results.refetch();
-          } else {
-            setSearch(term);
-          }
-        }}
-      />
-
+    <PageLayout
+      title="Prowlarr"
+      header={
+        <SearchBar
+          onSearch={(term) => {
+            if (search === term) {
+              $results.refetch();
+            } else {
+              setSearch(term);
+            }
+          }}
+        />
+      }
+    >
       {search ? (
         $results.isFetching ? (
           <CenteredMessage>
@@ -46,6 +47,6 @@ export default function Prowlarr() {
           <ResultsTable data={$results.data || []} />
         )
       ) : null}
-    </>
+    </PageLayout>
   );
 }

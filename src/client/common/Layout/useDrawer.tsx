@@ -6,7 +6,6 @@ import {
   ListItemText,
   ListItemButton,
 } from "@mui/material";
-import { Drawer, DrawerHeader } from "./styled";
 import { Link, useLocation } from "wouter";
 
 export interface useDrawerProps {
@@ -30,61 +29,58 @@ export default function useDrawer({ menu }: useDrawerProps) {
   };
 
   const drawer = (
-    <Drawer
-      variant="permanent"
-      open={open}
-      sx={{
-        zIndex: 1,
-        "& > .MuiPaper-root": { borderRight: 0, background: "transparent" },
-      }}
-    >
-      <DrawerHeader />
-      <List component="div" sx={{ p: 1 }}>
-        {menu.map((item, index) => (
-          <Link key={index} to={item.to}>
-            <ListItem
-              disablePadding
-              component="a"
+    // <Drawer
+    //   variant="permanent"
+    //   open={open}
+    //   sx={{
+    //     zIndex: 1,
+    //     "& > .MuiPaper-root": { borderRight: 0, background: "transparent" },
+    //   }}
+    // >
+    //   <DrawerHeader />
+    <List component="div" sx={{ p: 0 }}>
+      {menu.map((item, index) => (
+        <Link key={index} to={item.to}>
+          <ListItem
+            disablePadding
+            component="a"
+            sx={(theme) => ({
+              borderRadius: `${theme.shape.borderRadius}px`,
+              overflow: "hidden",
+              display: "block",
+              color: "white",
+              mb: 1,
+              backgroundColor: location.startsWith(item.to)
+                ? theme.palette.primary.dark
+                : undefined,
+            })}
+          >
+            <ListItemButton
               sx={{
-                borderRadius: "4px",
-                overflow: "hidden",
-                display: "block",
-                color: "unset",
-                mb: 1,
-                backgroundColor: location.startsWith(item.to)
-                  ? "#463f51"
-                  : undefined,
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
               }}
             >
-              <ListItemButton
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  mr: 2,
+                  minWidth: 0,
+                  justifyContent: "center",
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.title}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        ))}
-      </List>
-    </Drawer>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+      ))}
+    </List>
+    // </Drawer>
   );
 
-  const drawerHeader = <DrawerHeader />;
+  // const drawerHeader = <DrawerHeader />;
 
   return {
     isOpen: open,
@@ -92,6 +88,6 @@ export default function useDrawer({ menu }: useDrawerProps) {
     closeDrawer,
     toggleDrawer,
     drawer,
-    drawerHeader,
+    // drawerHeader,
   };
 }

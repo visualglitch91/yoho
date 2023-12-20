@@ -9,8 +9,8 @@ const columns: GridColDef[] = [
     headerName: "Age",
     type: "number",
     width: 110,
-    align: "left",
-    headerAlign: "left",
+    align: "center",
+    headerAlign: "center",
     renderCell: (params) => <>{params.value} days</>,
   },
   {
@@ -67,8 +67,8 @@ const columns: GridColDef[] = [
 export default function ResultsTable({ data }: { data: Torrent[] }) {
   return (
     <DataGrid
-      sx={{ mt: 2 }}
       autoPageSize
+      disableColumnSelector
       rowSelection={false}
       getRowId={(it) => it.guid}
       rows={data}

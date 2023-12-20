@@ -11,6 +11,7 @@ interface SelectOption<T extends string | number> {
   label: string;
   value: T;
   hidden?: boolean;
+  disabled?: boolean;
 }
 
 export default function SelectField<T extends string | number>({
@@ -60,7 +61,7 @@ export default function SelectField<T extends string | number>({
       >
         {options.map((it) =>
           it.hidden ? null : (
-            <MenuItem key={it.value} value={it.value}>
+            <MenuItem key={it.value} value={it.value} disabled={it.disabled}>
               {it.label}
             </MenuItem>
           )

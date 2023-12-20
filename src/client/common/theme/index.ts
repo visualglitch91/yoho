@@ -38,8 +38,14 @@ const overrides = Object.entries(
 
 const theme = createTheme({
   components: overrides,
+  typography: {
+    fontFamily: "Poppins",
+  },
   //@ts-expect-error
   shadows: times(25, () => "none"),
+  shape: {
+    borderRadius: 12,
+  },
   palette: {
     mode: "dark",
     primary: {
@@ -48,17 +54,17 @@ const theme = createTheme({
     secondary: {
       main: draculaPalette.purple,
     },
-    background: {
-      default: draculaPalette.background,
-      paper: "#111217",
-    },
-    text: {
-      primary: draculaPalette.foreground,
-      secondary: draculaPalette.comment,
-    },
-    action: {
-      active: draculaPalette.foreground,
-    },
+    // background: {
+    //   default: draculaPalette.background,
+    //   paper: "#111217",
+    // },
+    // text: {
+    //   primary: draculaPalette.foreground,
+    //   secondary: draculaPalette.comment,
+    // },
+    // action: {
+    //   active: draculaPalette.foreground,
+    // },
     error: {
       main: draculaPalette.red,
     },

@@ -1,11 +1,12 @@
 import { orderBy } from "lodash";
-import { CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { api, wait } from "$common/utils";
-import AppBar from "$common/Layout/AppBar";
 import DownloadList, { Download } from "$common/DownloadList";
 import { usePrompt } from "$common/hooks/usePrompt";
 import CenteredMessage from "$common/CenteredMessage";
+import PageLayout from "$common/PageLayout";
+import { Add } from "@mui/icons-material";
 
 const fallbackStatus = {
   status: "processing",
@@ -92,8 +93,23 @@ export default function Transmission() {
   };
 
   return (
-    <>
-      <AppBar title="Transmission" />
+    <PageLayout
+      title="Transmission"
+      actions={
+        <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
+          Add Torrent
+        </Button>
+      }
+      header={
+        <Box
+          sx={(theme) => ({
+            margin: theme.spacing(0, -6, -2),
+            "& .MuiAlert-root": { borderRadius: 0 },
+          })}
+          id="transmission__selection-alert"
+        />
+      }
+    >
       {typeof $torrents.data === "undefined" ? (
         <CenteredMessage>
           <CircularProgress color="primary" />
@@ -111,12 +127,12 @@ export default function Transmission() {
             total: it.sizeWhenDone,
             downloadRate: Math.max(0, it.rateDownload),
           }))}
-          onAdd={onAdd}
+          selectionAlertPortalId="transmission__selection-alert"
           onStart={onStart}
           onStop={onStop}
           onRemove={onRemove}
         />
       )}
-    </>
+    </PageLayout>
   );
 }

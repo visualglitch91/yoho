@@ -11,7 +11,24 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <GlobalStyles styles={{ body: { background: "#020202" } }} />
+        <GlobalStyles
+          styles={(theme) => ({
+            body: {
+              color: theme.palette.text.primary,
+              background: theme.palette.background.default,
+            },
+            "body .MuiDataGrid-root": {
+              border: 0,
+              "--unstable_DataGrid-radius": 0,
+              "& .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-cell:focus": {
+                outline: "none",
+              },
+              ".MuiDataGrid-columnHeaders": {
+                background: theme.palette.background.default,
+              },
+            },
+          })}
+        />
         <ModalProvider>
           <YoHo />
         </ModalProvider>

@@ -1,11 +1,12 @@
 import { orderBy } from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import { CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
+import { Add } from "@mui/icons-material";
 import { api } from "$common/utils";
-import AppBar from "$common/Layout/AppBar";
 import DownloadList, { Download } from "$common/DownloadList";
 import { usePrompt } from "$common/hooks/usePrompt";
 import CenteredMessage from "$common/CenteredMessage";
+import PageLayout from "$common/PageLayout";
 
 export default function JDownloader() {
   const prompt = usePrompt();
@@ -51,8 +52,23 @@ export default function JDownloader() {
   };
 
   return (
-    <>
-      <AppBar title="JDownloader" />
+    <PageLayout
+      title="JDownloader"
+      actions={
+        <Button startIcon={<Add />} variant="outlined" onClick={onAdd}>
+          Add Torrent
+        </Button>
+      }
+      header={
+        <Box
+          sx={(theme) => ({
+            margin: theme.spacing(0, -6, -2),
+            "& .MuiAlert-root": { borderRadius: 0 },
+          })}
+          id="jdownloader__selection-alert"
+        />
+      }
+    >
       {typeof $downloads.data === "undefined" ? (
         <CenteredMessage>
           <CircularProgress color="primary" />
@@ -85,10 +101,10 @@ export default function JDownloader() {
               downloadRate: Math.max(0, it.speed),
             };
           })}
-          onAdd={onAdd}
+          selectionAlertPortalId="jdownloader__selection-alert"
           onRemove={onRemove}
         />
       )}
-    </>
+    </PageLayout>
   );
 }

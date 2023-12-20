@@ -1,12 +1,10 @@
 import {
-  Fab,
   List,
   Stack,
   Alert,
   Paper,
   Button,
   ListItem,
-  Snackbar,
   Checkbox,
   IconButton,
   ListItemIcon,
@@ -17,7 +15,6 @@ import {
   HighlightOff as RemoveIcon,
   PlayCircleOutline as PlayIcon,
   PauseCircleOutline as PauseIcon,
-  Add as AddIcon,
 } from "@mui/icons-material";
 import { humanizeBytes, round } from "$common/utils";
 import humanizeDuration from "humanize-duration";
@@ -26,6 +23,7 @@ import useConfirm from "$common/hooks/useConfirm";
 import { useEffect, useState } from "react";
 import CenteredMessage from "$common/CenteredMessage";
 import { difference } from "lodash";
+import Portal from "$common/Portal";
 
 export interface Download {
   id: string;
@@ -47,13 +45,13 @@ export interface Download {
 
 export default function DownloadList({
   downloads,
-  onAdd,
+  selectionAlertPortalId,
   onStart,
   onStop,
   onRemove,
 }: {
   downloads: Download[];
-  onAdd: () => void;
+  selectionAlertPortalId: string;
   onStart?: (downloads: Download[]) => void;
   onStop?: (downloads: Download[]) => void;
   onRemove: (downloads: Download[], deleteData: boolean) => void;
@@ -107,48 +105,50 @@ export default function DownloadList({
 
   return (
     <>
-      <Fab
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          right: 16,
-        }}
-        color="primary"
-        onClick={onAdd}
-      >
-        <AddIcon />
-      </Fab>
-      <Snackbar sx={{ width: "calc(100% - 48px)" }} open={selected.length > 0}>
-        <Alert
-          sx={{ width: "100%" }}
-          icon={false}
-          variant="filled"
-          severity="info"
-          action={
-            <>
-              {canStartStop && (
-                <>
-                  <Button
-                    color="inherit"
-                    size="small"
-                    onClick={onSelectedStart}
-                  >
-                    Start
-                  </Button>
-                  <Button color="inherit" size="small" onClick={onSelectedStop}>
-                    Stop
-                  </Button>
-                </>
-              )}
-              <Button color="inherit" size="small" onClick={onSelectedRemove}>
-                Remove
-              </Button>
-            </>
-          }
-        >
-          {`${selected.length} download(s) selected`}
-        </Alert>
-      </Snackbar>
+      {selected.length > 0 && (
+        <Portal portalId={selectionAlertPortalId}>
+          <Alert
+            sx={{ width: "100%" }}
+            icon={false}
+            variant="filled"
+            severity="info"
+            action={
+              <>
+                {canStartStop && (
+                  <>
+                    <Button
+                      color="inherit"
+                      size="small"
+                      onClick={onSelectedStart}
+                    >
+                      Start
+                    </Button>
+                    <Button
+                      color="inherit"
+                      size="small"
+                      onClick={onSelectedStop}
+                    >
+                      Stop
+                    </Button>
+                  </>
+                )}
+                <Button color="inherit" size="small" onClick={onSelectedRemove}>
+                  Remove
+                </Button>
+                <Button
+                  color="inherit"
+                  size="small"
+                  onClick={() => setSelected([])}
+                >
+                  Clear
+                </Button>
+              </>
+            }
+          >
+            {`${selected.length} download(s) selected`}
+          </Alert>
+        </Portal>
+      )}
       {downloads.length === 0 ? (
         <CenteredMessage>No downloads found</CenteredMessage>
       ) : (

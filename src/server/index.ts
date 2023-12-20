@@ -5,6 +5,7 @@ import { createAxiosProxy } from "./utils";
 import jdownloader from "./jdownloader";
 import transmission from "./transmission";
 import nswitch from "./nswitch";
+import rg351p from "./rg351p";
 
 const port = Number(env.PORT);
 const app = express();
@@ -30,6 +31,7 @@ createAxiosProxy(app, "/api/prowlarr", env.PROWLARR_API, {
 app.use("/api/jdownloader", jdownloader);
 app.use("/api/transmission", transmission);
 app.use("/api/switch", nswitch);
+app.use("/api/rg351p", rg351p);
 
 ViteExpress.listen(app, port, () =>
   console.log("Server is listening at port", port)
