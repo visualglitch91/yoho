@@ -55,9 +55,7 @@ export default function RG351P() {
   });
 
   useEffect(() => {
-    if (mounted) {
-      setPlatform("NONE");
-    }
+    setPlatform("NONE");
   }, [mounted]);
 
   return (
@@ -73,54 +71,56 @@ export default function RG351P() {
         </>
       }
       actions={
-        $status.data && $status.data.mounted ? (
-          <>
-            <div>
-              <SelectField
-                sx={{ width: 200 }}
-                value={platform}
-                onChange={(event) => setPlatform(event.target.value)}
-                options={[
-                  {
-                    label: "Select a Platform",
-                    value: "NONE",
-                    disabled: true,
-                  },
-                  ...$status.data.platforms
-                    .filter((it) => it.enabled)
-                    .map((it) => ({
-                      label: it.name,
-                      value: it.name,
-                    })),
-                ]}
-              />
-            </div>
+        $status.data ? (
+          $status.data.mounted ? (
+            <>
+              <div>
+                <SelectField
+                  sx={{ width: 200 }}
+                  value={platform}
+                  onChange={(event) => setPlatform(event.target.value)}
+                  options={[
+                    {
+                      label: "Select a Platform",
+                      value: "NONE",
+                      disabled: true,
+                    },
+                    ...$status.data.platforms
+                      .filter((it) => it.enabled)
+                      .map((it) => ({
+                        label: it.name,
+                        value: it.name,
+                      })),
+                  ]}
+                />
+              </div>
+              <Button
+                variant="outlined"
+                startIcon={<Add />}
+                onClick={() => {
+                  mount((props) => (
+                    <UploadDialog
+                      {...props}
+                      platforms={$status.data?.platforms || []}
+                      defaultPlatform={platform}
+                      onUpload={() => $games.refetch()}
+                    />
+                  ));
+                }}
+              >
+                Upload
+              </Button>
+            </>
+          ) : (
             <Button
               variant="outlined"
-              startIcon={<Add />}
-              onClick={() => {
-                mount((props) => (
-                  <UploadDialog
-                    {...props}
-                    platforms={$status.data?.platforms || []}
-                    defaultPlatform={platform}
-                    onUpload={() => $games.refetch()}
-                  />
-                ));
-              }}
+              disabled={$$mount.isPending}
+              onClick={() => $$mount.mutate()}
             >
-              Upload
+              Mount
             </Button>
-          </>
-        ) : (
-          <Button
-            variant="outlined"
-            disabled={$$mount.isPending}
-            onClick={() => $$mount.mutate()}
-          >
-            Mount
-          </Button>
-        )
+          )
+        ) : null
       }
     >
       {!$status.data ? (
@@ -137,7 +137,7 @@ export default function RG351P() {
           rowSelection={false}
           rowHeight={80}
           getRowId={(row) => row.path}
-          rows={$games.data || []}
+          rows={mounted ? $games.data || [] : []}
           initialState={{
             sorting: { sortModel: [{ field: "title", sort: "asc" }] },
           }}
