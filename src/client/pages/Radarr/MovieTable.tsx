@@ -38,12 +38,12 @@ export default function MovieTable({
       rowHeight={60}
       rows={movies}
       initialState={{
-        sorting: { sortModel: [{ field: "title", sort: "asc" }] },
+        sorting: { sortModel: [{ field: "sortTitle", sort: "asc" }] },
       }}
       onRowClick={({ row }) => onSelect(row)}
       columns={[
         {
-          field: "title",
+          field: "sortTitle",
           headerName: "Title",
           flex: 1,
           renderCell: ({ row }) => {

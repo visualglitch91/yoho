@@ -34,12 +34,12 @@ export default function ShowsTable({
       rowSelection={false}
       rows={shows}
       initialState={{
-        sorting: { sortModel: [{ field: "title", sort: "asc" }] },
+        sorting: { sortModel: [{ field: "sortTitle", sort: "asc" }] },
       }}
       onRowClick={({ row }) => onSelect(row)}
       columns={[
         {
-          field: "title",
+          field: "sortTitle",
           headerName: "Title",
           flex: 1,
           renderCell: ({ row }) => {

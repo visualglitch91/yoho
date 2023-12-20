@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { orderBy } from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "$common/utils";
 import { CircularProgress } from "@mui/material";
+import { api } from "$common/utils";
 import SearchBar from "$common/SearchBar";
 import CenteredMessage from "$common/CenteredMessage";
-import ShowsTable from "./ShowsTable";
 import PageLayout from "$common/PageLayout";
+import ShowsTable from "./ShowsTable";
+import { Show } from "./types";
 
 export default function Sonarr() {
   const [search, setSearch] = useState("");
@@ -40,23 +41,7 @@ export default function Sonarr() {
           ...it,
           downloading: seriesInQueue.includes(it.id),
         }));
-      }) as Promise<
-        {
-          id: string;
-          title: string;
-          downloading: boolean;
-          ended: boolean;
-          images: {
-            coverType: string;
-            remoteUrl: string;
-          }[];
-          path: string;
-          statistics: {
-            episodeCount: number;
-            episodeFileCount: number;
-          };
-        }[]
-      >;
+      }) as Promise<Show[]>;
     },
   });
 

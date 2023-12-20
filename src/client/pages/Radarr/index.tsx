@@ -6,10 +6,10 @@ import useModal from "$common/hooks/useModal";
 import { api } from "$common/utils";
 import CenteredMessage from "$common/CenteredMessage";
 import SearchBar from "$common/SearchBar";
+import PageLayout from "$common/PageLayout";
 import { Movie } from "./types";
 import MovieDialog from "./MovieDialog";
 import MovieTable from "./MovieTable";
-import PageLayout from "$common/PageLayout";
 
 export default function Radarr() {
   const mount = useModal();

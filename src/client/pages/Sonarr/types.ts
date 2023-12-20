@@ -1,6 +1,7 @@
 export interface Show {
   id: string;
   title: string;
+  sortTitle: string;
   downloading: boolean;
   ended: boolean;
   images: {

@@ -5,6 +5,7 @@ import {
   LiveTv as LiveTvIcon,
   Search as SearchIcon,
   Download as DownloadIcon,
+  VideogameAsset,
 } from "@mui/icons-material";
 import Layout from "$common/Layout";
 import Radarr from "$pages/Radarr";
@@ -49,20 +50,7 @@ export default function YoHo() {
         {
           title: "RG351P",
           to: "/rg351p",
-          icon: (
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              width="1.5rem"
-              height="1.5rem"
-            >
-              <img
-                src="/icons/handheld-white.png"
-                style={{ width: "1.8rem" }}
-              />
-            </Box>
-          ),
+          icon: <VideogameAsset />,
         },
         {
           title: "Torrent Search",
