@@ -24,6 +24,7 @@ export default function SelectField<T extends string | number>({
   onChange,
   sx,
   className,
+  size,
   ...props
 }: Omit<SelectProps<T>, "labelId" | "children" | "onChange"> &
   FieldBaseProps & {
@@ -39,6 +40,7 @@ export default function SelectField<T extends string | number>({
   return (
     <FieldBase
       {...fieldBaseIds}
+      size={size}
       sx={sx}
       className={className}
       fullWidth={fullWidth}

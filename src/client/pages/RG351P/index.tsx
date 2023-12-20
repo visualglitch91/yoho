@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { DataGrid } from "@mui/x-data-grid";
 import { Add } from "@mui/icons-material";
-import { CircularProgress, Button, Chip, styled, Stack } from "@mui/material";
+import {
+  Box,
+  Chip,
+  Stack,
+  Alert,
+  Button,
+  CircularProgress,
+} from "@mui/material";
 import { api } from "$common/utils";
 import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
 import SelectField from "$common/SelectField";
 import useModal from "$common/hooks/useModal";
+import Poster from "$common/Poster";
+import DataGrid from "$common/DataGrid";
 import { Game, Status } from "./types";
 import UploadDialog from "./UploadDialog";
 
@@ -17,14 +25,6 @@ const scraperStatusColors = {
   "scraping-game": "warning",
   unkown: "error",
 } as const;
-
-const Poster = styled("img")(({ theme }) => ({
-  aspectRatio: "1/1",
-  height: 50,
-  objectFit: "contain",
-  background: theme.palette.background.default,
-  textIndent: "-10000px", // Hide broken image indicator
-}));
 
 export default function RG351P() {
   const mount = useModal();
@@ -65,6 +65,7 @@ export default function RG351P() {
     } else {
       setPlatform("NONE");
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mounted]);
 
   useEffect(() => {
@@ -75,23 +76,21 @@ export default function RG351P() {
 
   return (
     <PageLayout
-      title={
-        <>
-          RG351P{" "}
-          <Chip
-            color={scraperStatusColors[scraperStatus]}
-            label={scraperStatus.split("-").join(" ")}
-            sx={{ textTransform: "capitalize" }}
-          />
-        </>
-      }
+      title={<>RG351P </>}
       actions={
         $status.data ? (
           $status.data.mounted ? (
             <>
-              <div>
+              {scraperStatus !== "idle" && (
+                <Chip
+                  color={scraperStatusColors[scraperStatus]}
+                  label={scraperStatus.split("-").join(" ")}
+                  sx={{ textTransform: "capitalize" }}
+                />
+              )}
+              <Box flexGrow={{ xs: 1, md: "unset" }}>
                 <SelectField
-                  sx={{ width: 200 }}
+                  sx={{ width: { xs: "100%", md: 200 } }}
                   value={platform}
                   onChange={(event) => setPlatform(event.target.value)}
                   options={[
@@ -108,7 +107,7 @@ export default function RG351P() {
                       })),
                   ]}
                 />
-              </div>
+              </Box>
               <Button
                 variant="outlined"
                 startIcon={<Add />}
@@ -138,19 +137,20 @@ export default function RG351P() {
         ) : null
       }
     >
-      {!$status.data ? (
+      {$status.isLoading ? (
         <CenteredMessage>
           <CircularProgress color="primary" />
+        </CenteredMessage>
+      ) : !mounted ? (
+        <CenteredMessage>
+          <Alert icon={false}>
+            RG351P is not mounted. Please mount it to list its games.
+          </Alert>
         </CenteredMessage>
       ) : (
         <DataGrid
           sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
-          autoPageSize
-          disableColumnMenu
-          disableColumnFilter
-          disableColumnSelector
-          rowSelection={false}
-          rowHeight={80}
+          rowHeight={88}
           getRowId={(row) => row.path}
           rows={mounted ? $games.data || [] : []}
           initialState={{
@@ -164,14 +164,14 @@ export default function RG351P() {
               renderCell: ({ row }) => (
                 <Stack spacing={2} direction="row" alignItems="center">
                   <Poster
-                    loading="lazy"
+                    height={60}
+                    objectFit="contain"
                     src={
                       row.image
                         ? `/api/rg351p/platform/${
                             row.platform
-                          }/media?path=${row.image.replace(
-                            "/screenshots/",
-                            "/covers/"
+                          }/media?path=${encodeURIComponent(
+                            row.image.replace("/screenshots/", "/covers/")
                           )}`
                         : ""
                     }

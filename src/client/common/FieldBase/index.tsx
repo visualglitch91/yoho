@@ -1,4 +1,9 @@
-import { InputLabel, FormControl, FormHelperText } from "@mui/material";
+import {
+  InputLabel,
+  FormControl,
+  FormHelperText,
+  FormControlProps,
+} from "@mui/material";
 import { SxProps } from "$common/theme/utils";
 
 export interface FieldBaseProps {
@@ -11,6 +16,7 @@ export interface FieldBaseProps {
   children?: React.ReactNode;
   sx?: SxProps;
   className?: string;
+  size?: FormControlProps["size"];
 }
 
 export default function FieldBase({
@@ -22,10 +28,16 @@ export default function FieldBase({
   fullWidth = true,
   sx,
   className,
+  size,
   children,
 }: FieldBaseProps) {
   return (
-    <FormControl sx={sx} className={className} fullWidth={fullWidth}>
+    <FormControl
+      sx={sx}
+      size={size}
+      className={className}
+      fullWidth={fullWidth}
+    >
       {label && <InputLabel id={labelId}>{label}</InputLabel>}
       {children}
       {helperText && (

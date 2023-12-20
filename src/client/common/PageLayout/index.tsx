@@ -1,12 +1,16 @@
-import { Box, Stack, Typography, styled } from "@mui/material";
+import { Menu as MenuIcon } from "@mui/icons-material";
+import { Box, IconButton, Stack, Typography, styled } from "@mui/material";
+import { toggleDrawerRef } from "$common/Layout/useDrawer";
+import useIsMobile from "$common/hooks/usIsMobile";
 
 const PageHeader = styled(Box)(({ theme }) => ({
   position: "relative",
-  padding: theme.spacing(4, 6, 2),
   borderBottom: `1px solid ${theme.palette.divider}`,
   flexShrink: 0,
   boxShadow: "0px 10px 13px 0px rgba(20,20,20,0.2)",
   zIndex: 2,
+  padding: theme.spacing(2),
+  [theme.breakpoints.up("md")]: { padding: theme.spacing(4, 6) },
 }));
 
 const PageContent = styled(Box)({
@@ -34,25 +38,49 @@ export default function PageLayout({
   header?: React.ReactNode;
   children?: React.ReactNode;
 }) {
+  const isMobile = useIsMobile();
+
+  const actionsElement = actions ? (
+    <Stack
+      direction="row"
+      alignItems="center"
+      spacing={1}
+      sx={{ "&, & > *": { flexShrink: 0 } }}
+    >
+      {actions}
+    </Stack>
+  ) : null;
+
   return (
     <>
       <PageHeader>
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
-          <Typography variant="h4" noWrap component="div" sx={{ flexGrow: 1 }}>
+        <Stack direction="row" alignItems="center" spacing={2}>
+          {isMobile && (
+            <IconButton onClick={() => toggleDrawerRef.current()}>
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography
+            variant="h4"
+            noWrap
+            component="div"
+            sx={{
+              flexGrow: 1,
+              fontSize: { xs: 18, md: 28 },
+            }}
+          >
             {title}
           </Typography>
-          {actions && (
-            <Stack
-              direction="row"
-              alignItems="center"
-              spacing={1}
-              sx={{ "&, & > *": { flexShrink: 0 } }}
-            >
-              {actions}
-            </Stack>
-          )}
+          {!isMobile && actionsElement}
         </Stack>
-        {header}
+        <Stack
+          spacing={{ xs: 1, md: 2 }}
+          mt={{ xs: 1, md: 2 }}
+          sx={{ "&:empty": { display: "none" } }}
+        >
+          {isMobile && actionsElement}
+          {header}
+        </Stack>
       </PageHeader>
       <PageContent>{children}</PageContent>
     </>

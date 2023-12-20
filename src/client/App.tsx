@@ -24,7 +24,7 @@ export default function App() {
                 outline: "none",
               },
               ".MuiDataGrid-columnHeaders": {
-                background: theme.palette.background.default,
+                background: theme.palette.secondary.dark,
               },
             },
           })}

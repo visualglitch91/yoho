@@ -1,14 +1,11 @@
-import { Chip, styled, Stack, Checkbox } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { useMemo } from "react";
+import { keyBy } from "lodash";
+import { Chip, Stack, Checkbox, Alert } from "@mui/material";
+import CenteredMessage from "$common/CenteredMessage";
+import Poster from "$common/Poster";
+import DataGrid from "$common/DataGrid";
 import { Show } from "./types";
-
-const Poster = styled("img")(({ theme }) => ({
-  aspectRatio: "140/210",
-  width: 30,
-  objectFit: "cover",
-  background: theme.palette.background.default,
-  textIndent: "-10000px", // Hide broken image indicator
-}));
+import useConfig from "./useConfig";
 
 function getPercent(show: Show) {
   return show.statistics.episodeCount === 0
@@ -23,15 +20,25 @@ export default function ShowsTable({
   shows: Show[];
   onSelect: (movie: Show) => void;
 }) {
+  const config = useConfig();
+
+  const qualityProfileMap = useMemo(
+    () => keyBy(config?.qualityProfiles, "id") || {},
+    [config?.qualityProfiles]
+  );
+
+  if (shows.length === 0) {
+    return (
+      <CenteredMessage>
+        <Alert icon={false}>No TV Shows found</Alert>
+      </CenteredMessage>
+    );
+  }
+
   return (
     <DataGrid
       sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
-      autoPageSize
-      disableColumnMenu
-      disableColumnFilter
-      disableColumnSelector
-      rowHeight={60}
-      rowSelection={false}
+      rowHeight={68}
       rows={shows}
       initialState={{
         sorting: { sortModel: [{ field: "sortTitle", sort: "asc" }] },
@@ -42,6 +49,7 @@ export default function ShowsTable({
           field: "sortTitle",
           headerName: "Title",
           flex: 1,
+          minWidth: 300,
           renderCell: ({ row }) => {
             const poster = row.images.find(
               (it) => it.coverType === "poster"
@@ -49,20 +57,23 @@ export default function ShowsTable({
 
             return (
               <Stack spacing={2} direction="row" alignItems="center">
-                <Poster src={poster || ""} />
+                <Poster aspectRatio="2/3" height={50} src={poster || ""} />
                 <span>{row.title}</span>
               </Stack>
             );
           },
         },
         {
-          field: "qualityProfileId",
+          field: "qualityProfile",
           headerName: "Quality Profile",
           align: "center",
           headerAlign: "center",
           width: 200,
           sortable: false,
-          renderCell: ({ value }) => value || "-",
+          valueGetter: ({ row }) =>
+            row.qualityProfileId
+              ? qualityProfileMap[row.qualityProfileId]?.name
+              : "-",
         },
         {
           field: "ended",

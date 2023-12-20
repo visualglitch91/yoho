@@ -11,7 +11,8 @@ export default function CenteredMessage({
         flex: 1,
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-start",
+        pt: 4,
       }}
     >
       {children}

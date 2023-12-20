@@ -1,7 +1,7 @@
 import { ComponentOverride } from "../utils";
 
 const MuiTextField: ComponentOverride["MuiTextField"] = {
-  defaultProps: { size: "small", fullWidth: true },
+  defaultProps: { fullWidth: true },
 };
 
 export default MuiTextField;

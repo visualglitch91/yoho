@@ -1,5 +1,6 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { GridColDef } from "@mui/x-data-grid";
 import { humanizeBytes } from "$common/utils";
+import DataGrid from "$common/DataGrid";
 import { Torrent } from "./types";
 import DownloadButton from "./DownloadButton";
 
@@ -17,7 +18,7 @@ const columns: GridColDef[] = [
     field: "title",
     headerName: "Title",
     flex: 1,
-    minWidth: 150,
+    minWidth: 300,
     renderCell: (params) => (
       <a href={params.row.guid} target="_blank" style={{ color: "inherit" }}>
         {params.value}
@@ -67,9 +68,8 @@ const columns: GridColDef[] = [
 export default function ResultsTable({ data }: { data: Torrent[] }) {
   return (
     <DataGrid
-      autoPageSize
-      disableColumnSelector
-      rowSelection={false}
+      enableColumnMenu
+      enableColumnFilter
       getRowId={(it) => it.guid}
       rows={data}
       columns={columns}

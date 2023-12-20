@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { DataGrid } from "@mui/x-data-grid";
 import {
   Stack,
   Table,
-  styled,
   TableRow,
   TableBody,
   TableCell,
@@ -12,18 +10,12 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { api, humanizeBytes } from "$common/utils";
+import DataGrid from "$common/DataGrid";
 import CenteredMessage from "$common/CenteredMessage";
 import PageLayout from "$common/PageLayout";
 import useModal from "$common/hooks/useModal";
 import StandardDialog from "$common/StandardDialog";
-
-const Poster = styled("img")(({ theme }) => ({
-  aspectRatio: "1/1",
-  height: 50,
-  objectFit: "cover",
-  background: theme.palette.background.default,
-  textIndent: "-10000px", // Hide broken image indicator
-}));
+import Poster from "$common/Poster";
 
 export default function NSwitch() {
   const mount = useModal();
@@ -47,12 +39,7 @@ export default function NSwitch() {
       ) : (
         <DataGrid
           sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
-          autoPageSize
-          disableColumnMenu
-          disableColumnFilter
-          disableColumnSelector
-          rowSelection={false}
-          rowHeight={80}
+          rowHeight={88}
           rows={$games.data || []}
           initialState={{
             sorting: { sortModel: [{ field: "title", sort: "asc" }] },
@@ -62,9 +49,10 @@ export default function NSwitch() {
               field: "title",
               headerName: "Title",
               flex: 1,
+              minWidth: 300,
               renderCell: ({ row }) => (
                 <Stack spacing={2} direction="row" alignItems="center">
-                  <Poster src={row.image || ""} />
+                  <Poster height={60} src={row.image || ""} />
                   <span>{row.title}</span>
                 </Stack>
               ),

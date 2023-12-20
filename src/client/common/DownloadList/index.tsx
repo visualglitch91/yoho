@@ -110,8 +110,6 @@ export default function DownloadList({
           <Alert
             sx={{ width: "100%" }}
             icon={false}
-            variant="filled"
-            severity="info"
             action={
               <>
                 {canStartStop && (
@@ -150,7 +148,9 @@ export default function DownloadList({
         </Portal>
       )}
       {downloads.length === 0 ? (
-        <CenteredMessage>No downloads found</CenteredMessage>
+        <CenteredMessage>
+          <Alert icon={false}>No downloads found</Alert>
+        </CenteredMessage>
       ) : (
         <Paper>
           <List sx={{ width: "100%", p: 0 }}>

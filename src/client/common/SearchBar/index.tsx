@@ -20,7 +20,6 @@ export default function SearchBar({
       <TextField
         fullWidth
         placeholder="Search"
-        size="small"
         name="search"
         InputProps={{
           startAdornment: (
@@ -33,7 +32,6 @@ export default function SearchBar({
       <button type="submit" style={{ display: "none" }} />
       <Button
         variant="outlined"
-        size="small"
         sx={{ flexShrink: 0 }}
         onClick={(e) => {
           const searchField = e.currentTarget

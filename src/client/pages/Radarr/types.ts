@@ -3,7 +3,7 @@ export interface Movie {
   title: string;
   sortTitle: string;
   downloading: boolean;
-  qualityProfileId: number;
+  qualityProfileId?: number;
   hasFile: boolean;
   monitored: boolean;
   rootFolderPath?: string;

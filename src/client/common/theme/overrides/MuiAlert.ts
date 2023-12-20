@@ -5,6 +5,14 @@ const MuiAlert: ComponentOverride["MuiAlert"] = {
     root: ({ theme }) => ({
       color: theme.palette.text.primary,
     }),
+    filledInfo: ({ theme }) => ({
+      color: theme.palette.secondary.contrastText,
+      background: theme.palette.secondary.dark,
+    }),
+  },
+  defaultProps: {
+    severity: "info",
+    variant: "filled",
   },
 };
 

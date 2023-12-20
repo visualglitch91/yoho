@@ -1,17 +1,11 @@
 import { keyBy } from "lodash";
 import { useMemo } from "react";
-import { Chip, styled, Stack } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Chip, Stack, Alert } from "@mui/material";
+import CenteredMessage from "$common/CenteredMessage";
+import DataGrid from "$common/DataGrid";
+import Poster from "$common/Poster";
 import { Movie } from "./types";
 import useConfig from "./useConfig";
-
-const Poster = styled("img")(({ theme }) => ({
-  aspectRatio: "140/210",
-  width: 30,
-  objectFit: "cover",
-  background: theme.palette.background.default,
-  textIndent: "-10000px", // Hide broken image indicator
-}));
 
 export default function MovieTable({
   movies,
@@ -27,15 +21,18 @@ export default function MovieTable({
     [config?.qualityProfiles]
   );
 
+  if (movies.length === 0) {
+    return (
+      <CenteredMessage>
+        <Alert icon={false}>No movies found</Alert>
+      </CenteredMessage>
+    );
+  }
+
   return (
     <DataGrid
       sx={{ "& .MuiDataGrid-row": { cursor: "pointer" } }}
-      autoPageSize
-      disableColumnMenu
-      disableColumnFilter
-      disableColumnSelector
-      rowSelection={false}
-      rowHeight={60}
+      rowHeight={68}
       rows={movies}
       initialState={{
         sorting: { sortModel: [{ field: "sortTitle", sort: "asc" }] },
@@ -46,6 +43,7 @@ export default function MovieTable({
           field: "sortTitle",
           headerName: "Title",
           flex: 1,
+          minWidth: 300,
           renderCell: ({ row }) => {
             const poster = row.images.find(
               (it) => it.coverType === "poster"
@@ -53,20 +51,23 @@ export default function MovieTable({
 
             return (
               <Stack spacing={2} direction="row" alignItems="center">
-                <Poster src={poster || ""} />
+                <Poster aspectRatio="2/3" height={50} src={poster || ""} />
                 <span>{row.title}</span>
               </Stack>
             );
           },
         },
         {
-          field: "qualityProfileId",
+          field: "qualityProfile",
           headerName: "Quality Profile",
           align: "center",
           headerAlign: "center",
           width: 230,
           sortable: false,
-          renderCell: ({ value }) => qualityProfileMap[value]?.name || "-",
+          valueGetter: ({ row }) =>
+            row.qualityProfileId
+              ? qualityProfileMap[row.qualityProfileId]?.name
+              : "-",
         },
         {
           field: "monitored",

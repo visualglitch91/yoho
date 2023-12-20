@@ -11,7 +11,6 @@ const MuiFormControl: ComponentOverride["MuiFormControl"] = {
       },
     },
   },
-  defaultProps: {},
 };
 
 export default MuiFormControl;
